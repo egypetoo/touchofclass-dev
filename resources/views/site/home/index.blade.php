@@ -1,0 +1,1044 @@
+@extends('layouts.site')
+
+@section('content')
+  <!--
+      ##################################################
+      #                   hero                         #
+      ##################################################
+    -->
+
+  @include('site.home._hero')
+
+  <!--
+      ##################################################
+      #                   About us                     #
+      ##################################################
+    -->
+  <section class="about about-km position-relative overflow-hidden py-5" id="about">
+    <!-- Decorative background -->
+    <div class="about-km-bg" aria-hidden="true">
+      <span class="about-km-shape about-km-shape-1"></span>
+      <span class="about-km-shape about-km-shape-2"></span>
+      <span class="about-km-panel"></span>
+      <span class="about-km-panel-line"></span>
+      <span class="about-km-frame about-km-frame-top"></span>
+      <span class="about-km-frame about-km-frame-bottom"></span>
+    </div>
+
+    <div class="container h-100 position-relative z-2 py-5">
+      <div class="row align-items-center">
+        <div class="col-12 col-lg-5 order-lg-2">
+          <div class="about-content">
+
+            <!-- Eyebrow -->
+            <div class="about-eyebrow d-inline-flex align-items-center gap-2 mb-3">
+              <span class="about-eyebrow-line"></span>
+              <span class="about-eyebrow-text">عن الشركة</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h2 class="about-title mb-3">
+              <span class="d-block about-title-dark">خبرة تمتد</span>
+              <span class="d-block about-title-gold">لكل مساحة تعيش فيها</span>
+            </h2>
+
+            <!-- Description -->
+            <p class="about-desc mb-4">
+              في <bdi>Touch of Class</bdi> نصمم وننفذ مساحات داخلية ومعمارية تعكس أسلوب حياتك، من الشقق والفلل للمكاتب والمشروعات الكبرى.
+            </p>
+
+            <!-- Action Button -->
+            <div class="about-action">
+              <a href="./about.html" class="km-btn">
+                <span>اعرف المزيد عنا</span>
+                <span class="km-btn-icon"><i class="fa-solid fa-arrow-left"></i></span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Image Cards -->
+        <div class="col-12 col-lg-7">
+          <div class="about-cards d-flex flex-column flex-lg-row">
+            <figure class="about-card about-card-pivot">
+              <div class="about-card-media" data-anim="reveal" data-anim-delay="0.25">
+                <img
+                  src="./assets/images/studio/interior-design.jpg"
+                  sizes="(max-width: 991px) 45vw, 380px"
+                  width="800"
+                  height="1067"
+                  alt="تفاصيل تصميم داخلي من Touch of Class"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </div>
+            </figure>
+
+            <figure class="about-card about-card-pump">
+              <div class="about-card-media" data-anim="reveal">
+                <img
+                  src="./assets/images/studio/about-main.jpg"
+                  sizes="(max-width: 991px) 45vw, 380px"
+                  width="800"
+                  height="1067"
+                  alt="مساحة داخلية من Touch of Class"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </div>
+            </figure>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!--
+    ##################################################
+    #                   Services                     #
+    ##################################################
+  -->
+  <section class="services-km" id="services">
+    <!-- Decorative background -->
+
+
+    <div class="container position-relative z-2">
+
+      <!-- Header -->
+      <div class="services-km-head text-center">
+        <div class="services-km-eyebrow d-inline-flex align-items-center gap-3 mb-3">
+          <span class="services-km-eyebrow-line"></span>
+          <span class="services-km-eyebrow-text">خدماتنا</span>
+          <span class="services-km-eyebrow-line"></span>
+        </div>
+
+        <h2 class="services-km-title mb-3">
+          <span class="services-km-title-dark">خدماتنا</span>
+          <span class="services-km-title-gold">الرئيسية</span>
+        </h2>
+
+        <p class="services-km-desc mx-auto">
+          خمس خدمات متكاملة تغطي التصميم الداخلي، المعماري، التخطيط، التجديد، وإدارة المشروع.
+        </p>
+      </div>
+
+      <div class="services-km-slider">
+        <div class="swiper services-swiper" aria-label="خدماتنا">
+          <div class="swiper-wrapper">
+
+            <!-- 1. التصميم الداخلي -->
+            <div class="swiper-slide">
+              <article class="service-card">
+                <div class="service-card-media">
+                  <img src="./assets/images/studio/service-interior.jpg" sizes="(max-width: 575px) 92vw, (max-width: 991px) 46vw, 440px" width="864" height="1152" alt="التصميم الداخلي - Touch of Class" class="service-card-img" loading="lazy" decoding="async">
+                </div>
+
+                <div class="service-card-body">
+                  <h3 class="service-card-title">التصميم الداخلي</h3>
+                  <p class="service-card-desc">
+                    مساحات أنيقة وعملية بتوازن بين الجمال والراحة، ومصممة على أسلوب حياتك.
+                  </p>
+                  <div class="service-card-action">
+                    <a href="./service-details.html" class="service-card-btn" aria-label="تعرف على تفاصيل خدمة التصميم الداخلي">
+                      <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <!-- 2. التصميم المعماري -->
+            <div class="swiper-slide">
+              <article class="service-card">
+                <div class="service-card-media">
+                  <img src="./assets/images/studio/service-architecture.jpg" sizes="(max-width: 575px) 92vw, (max-width: 991px) 46vw, 440px" width="864" height="1152" alt="التصميم المعماري - Touch of Class" class="service-card-img" loading="lazy" decoding="async">
+                </div>
+
+                <div class="service-card-body">
+                  <h3 class="service-card-title">التصميم المعماري</h3>
+                  <p class="service-card-desc">
+                    حلول معمارية تجمع الإبداع والوظيفة والاستدامة، ومفصّلة على رؤيتك وطبيعة الموقع.
+                  </p>
+                  <div class="service-card-action">
+                    <a href="./service-details.html" class="service-card-btn" aria-label="تعرف على تفاصيل خدمة التصميم المعماري">
+                      <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <!-- 3. تجديد المنازل -->
+            <div class="swiper-slide">
+              <article class="service-card">
+                <div class="service-card-media">
+                  <img src="./assets/images/studio/service-renovation.jpg" sizes="(max-width: 575px) 92vw, (max-width: 991px) 46vw, 440px" width="864" height="1152" alt="تجديد المنازل - Touch of Class" class="service-card-img" loading="lazy" decoding="async">
+                </div>
+
+                <div class="service-card-body">
+                  <h3 class="service-card-title">تجديد المنازل</h3>
+                  <p class="service-card-desc">
+                    نحوّل المساحات القائمة لبيئات حديثة، مع احترام طابع المبنى وإعادة الحياة لكل تفصيلة.
+                  </p>
+                  <div class="service-card-action">
+                    <a href="./service-details.html" class="service-card-btn" aria-label="تعرف على تفاصيل خدمة تجديد المنازل">
+                      <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <!-- 4. إدارة المشاريع -->
+            <div class="swiper-slide">
+              <article class="service-card">
+                <div class="service-card-media">
+                  <img src="./assets/images/studio/service-management.jpg" sizes="(max-width: 575px) 92vw, (max-width: 991px) 46vw, 440px" width="864" height="1152" alt="إدارة المشاريع - Touch of Class" class="service-card-img" loading="lazy" decoding="async">
+                </div>
+
+                <div class="service-card-body">
+                  <h3 class="service-card-title">إدارة المشاريع</h3>
+                  <p class="service-card-desc">
+                    إدارة كاملة للمشروع من البداية للنهاية، بتركيز على الجودة والوقت والتكلفة.
+                  </p>
+                  <div class="service-card-action">
+                    <a href="./service-details.html" class="service-card-btn" aria-label="تعرف على تفاصيل خدمة إدارة المشاريع">
+                      <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="service-card">
+                <div class="service-card-media">
+                  <img src="./assets/images/studio/service-masterplan.jpg" width="864" height="1152" alt="التخطيط العام - Touch of Class" class="service-card-img" loading="lazy" decoding="async">
+                </div>
+                <div class="service-card-body">
+                  <h3 class="service-card-title">التخطيط العام</h3>
+                  <p class="service-card-desc">
+                    تخطيط للمشروعات الأكبر يراعي الموقع والاستخدام طويل المدى، قبل الدخول في تفاصيل كل مبنى.
+                  </p>
+                  <div class="service-card-action">
+                    <a href="./service-details.html" class="service-card-btn" aria-label="تعرف على تفاصيل خدمة التخطيط العام">
+                      <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+          </div>
+        </div>
+        <div class="services-km-nav">
+          <button type="button" class="services-km-prev" aria-label="السابق"><i class="fa-solid fa-arrow-right"></i></button>
+          <button type="button" class="services-km-next" aria-label="التالي"><i class="fa-solid fa-arrow-left"></i></button>
+        </div>
+      </div>
+
+      <div class="km-section-more" data-anim="up">
+        <a href="./services.html" class="km-btn">
+          <span>عرض جميع الخدمات</span>
+          <span class="km-btn-icon"><i class="fa-solid fa-arrow-left"></i></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ##################################################
+    #                   Products                     #
+    ##################################################
+  -->
+  <section class="km-products" id="products">
+    <div class="km-products-banner">
+      <img src="./assets/images/studio/urban.jpg" sizes="(max-width: 991px) 185vw, 66vw" alt="مشروع داخلي من Touch of Class" class="km-products-banner-img" width="1600" height="900" loading="lazy" decoding="async"/>
+      <div class="km-products-banner-shade" aria-hidden="true"></div>
+      <svg class="km-products-banner-lines" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M516 0 L430 340"/>
+        <path d="M552 0 L466 340"/>
+        <path d="M0 236 L110 340"/>
+      </svg>
+
+      <div class="container position-relative">
+        <div class="km-products-intro">
+          <div class="km-eyebrow">
+            <span class="km-eyebrow-text">أعمالنا</span>
+            <span class="km-eyebrow-line"></span>
+          </div>
+          <h2 class="km-products-title"><span class="text-km-gradient">مشاريع</span> مختارة</h2>
+          <p>مجموعة من المساحات السكنية والتجارية التي صممناها بعناية، من الفلل والمكاتب حتى التجديد الكامل.</p>
+          <a href="./projects.html" class="km-btn mt-3">
+            <span>عرض كل المشاريع</span>
+            <span class="km-btn-icon"><i class="fa-solid fa-arrow-left"></i></span>
+          </a>
+        </div>
+
+
+
+      </div>
+    </div>
+
+    <div class="container position-relative">
+      <div class="km-products-tabs" role="tablist" aria-label="أعمالنا">
+        <div class="row g-2 g-lg-0">
+          <div class="col-6 col-lg-3">
+            <button type="button" class="km-tab w-100 h-100 active" id="km-tab-motors" role="tab" data-bs-toggle="tab" data-bs-target="#km-pane-motors" aria-controls="km-pane-motors" aria-selected="true" data-cat="motors" data-desc="فلل وشقق مصممة براحة وتفاصيل يومية واضحة.">
+              <span class="km-tab-icon"><i class="fa-solid fa-gears"></i></span>
+              <span class="km-tab-text"><strong>سكني</strong><small>(فلل وشقق)</small></span>
+            </button>
+          </div>
+          <div class="col-6 col-lg-3">
+            <button type="button" class="km-tab w-100 h-100" id="km-tab-pumps" role="tab" data-bs-toggle="tab" data-bs-target="#km-pane-pumps" aria-controls="km-pane-pumps" aria-selected="false" data-cat="pumps" data-desc="مكاتب ومساحات عمل تعكس هوية المكان.">
+              <span class="km-tab-icon"><i class="fa-solid fa-fan"></i></span>
+              <span class="km-tab-text"><strong>تجاري</strong><small>(مكاتب)</small></span>
+            </button>
+          </div>
+          <div class="col-6 col-lg-3">
+            <button type="button" class="km-tab w-100 h-100" id="km-tab-pipes" role="tab" data-bs-toggle="tab" data-bs-target="#km-pane-pipes" aria-controls="km-pane-pipes" aria-selected="false" data-cat="pipes" data-desc="تجديد يحافظ على روح المكان ويحدّث استخدامه.">
+              <span class="km-tab-icon"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+              <span class="km-tab-text"><strong>تجديد</strong><small>(قبل وبعد)</small></span>
+            </button>
+          </div>
+          <div class="col-6 col-lg-3">
+            <button type="button" class="km-tab w-100 h-100" id="km-tab-cables" role="tab" data-bs-toggle="tab" data-bs-target="#km-pane-cables" aria-controls="km-pane-cables" aria-selected="false" data-cat="cables" data-desc="تصميم معماري وتخطيط يربط المبنى بموقعه.">
+              <span class="km-tab-icon"><i class="fa-solid fa-plug-circle-bolt"></i></span>
+              <span class="km-tab-text"><strong>معماري</strong><small>(مخططات)</small></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="km-products-toolbar">
+        <div class="km-products-heading">
+          <h3 id="km-cat-title">سكني</h3>
+          <p id="km-cat-desc">فلل وشقق مصممة براحة وتفاصيل يومية واضحة.</p>
+        </div>
+
+        <div class="km-products-tools">
+          <label class="km-search">
+            <span class="visually-hidden">البحث عن مشروع</span>
+            <input type="search" id="km-product-search" placeholder="البحث عن مشروع..." autocomplete="off"/>
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </label>
+          <label class="km-sort">
+            <span class="visually-hidden">ترتيب المشاريع</span>
+            <select id="km-product-sort">
+              <option value="default">ترتيب حسب</option>
+              <option value="name">الاسم</option>
+              <option value="value-asc">المساحة: من الأصغر</option>
+              <option value="value-desc">المساحة: من الأكبر</option>
+            </select>
+          </label>
+          <div class="km-view-toggle" role="radiogroup" aria-label="طريقة العرض">
+            <input type="radio" class="btn-check" name="km-view" id="km-view-grid" value="grid" autocomplete="off" aria-label="عرض شبكي" checked/>
+            <label for="km-view-grid" title="عرض شبكي"><i class="fa-solid fa-table-cells-large"></i></label>
+            <input type="radio" class="btn-check" name="km-view" id="km-view-list" value="list" autocomplete="off" aria-label="عرض قائمة"/>
+            <label for="km-view-list" title="عرض قائمة"><i class="fa-solid fa-list"></i></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content km-products-panes">
+        <div class="tab-pane fade show active" id="km-pane-motors" role="tabpanel" aria-labelledby="km-tab-motors" tabindex="0">
+          <div class="km-products-stage">
+            <div class="swiper km-products-swiper" aria-label="سكني">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide" data-value="7.5">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/zayed-villa.jpg" data-index="0"><img src="./assets/images/studio/zayed-villa.jpg" alt="فيلا الشيخ زايد" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="فيلا الشيخ زايد" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="2"><img src="./assets/images/studio/photo-1.jpg" alt="فيلا الشيخ زايد" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="3"><img src="./assets/images/studio/photo-2.jpg" alt="فيلا الشيخ زايد" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">فيلا الشيخ زايد</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="11">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/the-loft.jpg" data-index="0"><img src="./assets/images/studio/the-loft.jpg" alt="لوفت معاصر" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-3.jpg" data-index="1"><img src="./assets/images/studio/photo-3.jpg" alt="لوفت معاصر" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/elegance.jpg" data-index="2"><img src="./assets/images/studio/elegance.jpg" alt="لوفت معاصر" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-4.jpg" data-index="3"><img src="./assets/images/studio/photo-4.jpg" alt="لوفت معاصر" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">لوفت معاصر</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="5.5">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/penthouse.jpg" data-index="0"><img src="./assets/images/studio/penthouse.jpg" alt="بنتهاوس" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/prestigious.jpg" data-index="1"><img src="./assets/images/studio/prestigious.jpg" alt="بنتهاوس" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-5.jpg" data-index="2"><img src="./assets/images/studio/photo-5.jpg" alt="بنتهاوس" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-6.jpg" data-index="3"><img src="./assets/images/studio/photo-6.jpg" alt="بنتهاوس" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">بنتهاوس</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="15">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/offices.jpg" data-index="0"><img src="./assets/images/studio/offices.jpg" alt="مكتب العاصمة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/urban.jpg" data-index="1"><img src="./assets/images/studio/urban.jpg" alt="مكتب العاصمة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/architecture.jpg" data-index="2"><img src="./assets/images/studio/architecture.jpg" alt="مكتب العاصمة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="3"><img src="./assets/images/studio/photo-1.jpg" alt="مكتب العاصمة" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">مكتب العاصمة</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="22">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/east-residence.jpg" data-index="0"><img src="./assets/images/studio/east-residence.jpg" alt="إقامة شرقية" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="1"><img src="./assets/images/studio/photo-2.jpg" alt="إقامة شرقية" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="2"><img src="./assets/images/studio/interior-design.jpg" alt="إقامة شرقية" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-3.jpg" data-index="3"><img src="./assets/images/studio/photo-3.jpg" alt="إقامة شرقية" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">إقامة شرقية</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="2.2">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/lake-house.jpg" data-index="0"><img src="./assets/images/studio/lake-house.jpg" alt="بيت البحيرة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-4.jpg" data-index="1"><img src="./assets/images/studio/photo-4.jpg" alt="بيت البحيرة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-5.jpg" data-index="2"><img src="./assets/images/studio/photo-5.jpg" alt="بيت البحيرة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/elegance.jpg" data-index="3"><img src="./assets/images/studio/elegance.jpg" alt="بيت البحيرة" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">بيت البحيرة</h4>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+            <p class="km-products-empty" hidden>لا توجد مشاريع مطابقة للبحث.</p>
+          </div>
+
+          <div class="km-products-nav">
+            <button type="button" class="km-products-arrow km-products-prev" aria-label="السابق"><i class="fa-solid fa-arrow-right"></i></button>
+            <div class="km-products-dots"></div>
+            <button type="button" class="km-products-arrow km-products-next" aria-label="التالي"><i class="fa-solid fa-arrow-left"></i></button>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="km-pane-pumps" role="tabpanel" aria-labelledby="km-tab-pumps" tabindex="0">
+          <div class="km-products-stage">
+            <div class="swiper km-products-swiper" aria-label="تجاري">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide" data-value="7.5">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/renovation.jpg" data-index="0"><img src="./assets/images/studio/renovation.jpg" alt="تجديد منزل" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-6.jpg" data-index="1"><img src="./assets/images/studio/photo-6.jpg" alt="تجديد منزل" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="2"><img src="./assets/images/studio/photo-2.jpg" alt="تجديد منزل" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="3"><img src="./assets/images/studio/interior-design.jpg" alt="تجديد منزل" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">تجديد منزل</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="5.5">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/dallas.jpg" data-index="0"><img src="./assets/images/studio/dallas.jpg" alt="فيلا دالاس" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/zayed-villa.jpg" data-index="1"><img src="./assets/images/studio/zayed-villa.jpg" alt="فيلا دالاس" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/prestigious.jpg" data-index="2"><img src="./assets/images/studio/prestigious.jpg" alt="فيلا دالاس" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="3"><img src="./assets/images/studio/photo-1.jpg" alt="فيلا دالاس" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">فيلا دالاس</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="11">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/towers.jpg" data-index="0"><img src="./assets/images/studio/towers.jpg" alt="أبراج سكنية" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/urban.jpg" data-index="1"><img src="./assets/images/studio/urban.jpg" alt="أبراج سكنية" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/architecture.jpg" data-index="2"><img src="./assets/images/studio/architecture.jpg" alt="أبراج سكنية" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/offices.jpg" data-index="3"><img src="./assets/images/studio/offices.jpg" alt="أبراج سكنية" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">أبراج سكنية</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="2.2">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/elegance.jpg" data-index="0"><img src="./assets/images/studio/elegance.jpg" alt="أناقة هادئة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/the-loft.jpg" data-index="1"><img src="./assets/images/studio/the-loft.jpg" alt="أناقة هادئة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-3.jpg" data-index="2"><img src="./assets/images/studio/photo-3.jpg" alt="أناقة هادئة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-4.jpg" data-index="3"><img src="./assets/images/studio/photo-4.jpg" alt="أناقة هادئة" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">أناقة هادئة</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="15">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/urban.jpg" data-index="0"><img src="./assets/images/studio/urban.jpg" alt="حياة المدينة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/brooklyn.jpg" data-index="1"><img src="./assets/images/studio/brooklyn.jpg" alt="حياة المدينة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-5.jpg" data-index="2"><img src="./assets/images/studio/photo-5.jpg" alt="حياة المدينة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/offices.jpg" data-index="3"><img src="./assets/images/studio/offices.jpg" alt="حياة المدينة" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">حياة المدينة</h4>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+            <p class="km-products-empty" hidden>لا توجد مشاريع مطابقة للبحث.</p>
+          </div>
+
+          <div class="km-products-nav">
+            <button type="button" class="km-products-arrow km-products-prev" aria-label="السابق"><i class="fa-solid fa-arrow-right"></i></button>
+            <div class="km-products-dots"></div>
+            <button type="button" class="km-products-arrow km-products-next" aria-label="التالي"><i class="fa-solid fa-arrow-left"></i></button>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="km-pane-pipes" role="tabpanel" aria-labelledby="km-tab-pipes" tabindex="0">
+          <div class="km-products-stage">
+            <div class="swiper km-products-swiper" aria-label="تجديد">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide" data-value="110">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/brooklyn.jpg" data-index="0"><img src="./assets/images/studio/brooklyn.jpg" alt="جناح سكني" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="جناح سكني" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="2"><img src="./assets/images/studio/photo-1.jpg" alt="جناح سكني" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="3"><img src="./assets/images/studio/photo-2.jpg" alt="جناح سكني" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">جناح سكني</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="90">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/architecture.jpg" data-index="0"><img src="./assets/images/studio/architecture.jpg" alt="مكتب معاصر" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="مكتب معاصر" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="2"><img src="./assets/images/studio/photo-1.jpg" alt="مكتب معاصر" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="3"><img src="./assets/images/studio/photo-2.jpg" alt="مكتب معاصر" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">مكتب معاصر</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="4">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/prestigious.jpg" data-index="0"><img src="./assets/images/studio/prestigious.jpg" alt="تفاصيل مخصصة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="تفاصيل مخصصة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="2"><img src="./assets/images/studio/photo-1.jpg" alt="تفاصيل مخصصة" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="3"><img src="./assets/images/studio/photo-2.jpg" alt="تفاصيل مخصصة" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">تفاصيل مخصصة</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="63">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/brooklyn.jpg" data-index="0"><img src="./assets/images/studio/brooklyn.jpg" alt="جناح بروكلين" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/penthouse.jpg" data-index="1"><img src="./assets/images/studio/penthouse.jpg" alt="جناح بروكلين" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-6.jpg" data-index="2"><img src="./assets/images/studio/photo-6.jpg" alt="جناح بروكلين" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/elegance.jpg" data-index="3"><img src="./assets/images/studio/elegance.jpg" alt="جناح بروكلين" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">جناح بروكلين</h4>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+            <p class="km-products-empty" hidden>لا توجد مشاريع مطابقة للبحث.</p>
+          </div>
+
+          <div class="km-products-nav">
+            <button type="button" class="km-products-arrow km-products-prev" aria-label="السابق"><i class="fa-solid fa-arrow-right"></i></button>
+            <div class="km-products-dots"></div>
+            <button type="button" class="km-products-arrow km-products-next" aria-label="التالي"><i class="fa-solid fa-arrow-left"></i></button>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="km-pane-cables" role="tabpanel" aria-labelledby="km-tab-cables" tabindex="0">
+          <div class="km-products-stage">
+            <div class="swiper km-products-swiper" aria-label="معماري">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide" data-value="16">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="0"><img src="./assets/images/studio/photo-1.jpg" alt="تشطيب متكامل" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="تشطيب متكامل" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="2"><img src="./assets/images/studio/photo-2.jpg" alt="تشطيب متكامل" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-3.jpg" data-index="3"><img src="./assets/images/studio/photo-3.jpg" alt="تشطيب متكامل" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">تشطيب متكامل</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="6">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/zayed-villa.jpg" data-index="0"><img src="./assets/images/studio/zayed-villa.jpg" alt="تصميم داخلي" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="تصميم داخلي" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="2"><img src="./assets/images/studio/photo-1.jpg" alt="تصميم داخلي" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="3"><img src="./assets/images/studio/photo-2.jpg" alt="تصميم داخلي" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">تصميم داخلي</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="25">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/the-loft.jpg" data-index="0"><img src="./assets/images/studio/the-loft.jpg" alt="تخطيط معماري" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="تخطيط معماري" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="2"><img src="./assets/images/studio/photo-1.jpg" alt="تخطيط معماري" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="3"><img src="./assets/images/studio/photo-2.jpg" alt="تخطيط معماري" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">تخطيط معماري</h4>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide" data-value="4">
+                  <article class="km-product-card km-album">
+                    <div class="km-product-media km-album-photos">
+                      <a href="./assets/images/studio/penthouse.jpg" data-index="0"><img src="./assets/images/studio/penthouse.jpg" alt="إدارة تنفيذ" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/interior-design.jpg" data-index="1"><img src="./assets/images/studio/interior-design.jpg" alt="إدارة تنفيذ" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-1.jpg" data-index="2"><img src="./assets/images/studio/photo-1.jpg" alt="إدارة تنفيذ" loading="lazy" decoding="async"></a>
+                      <a href="./assets/images/studio/photo-2.jpg" data-index="3"><img src="./assets/images/studio/photo-2.jpg" alt="إدارة تنفيذ" loading="lazy" decoding="async"></a>
+                    </div>
+                    <div class="km-product-body">
+                      <h4 class="km-product-name km-album-name">إدارة تنفيذ</h4>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="km-products-nav">
+            <button type="button" class="km-products-arrow km-products-prev" aria-label="السابق"><i class="fa-solid fa-arrow-right"></i></button>
+            <div class="km-products-dots"></div>
+            <button type="button" class="km-products-arrow km-products-next" aria-label="التالي"><i class="fa-solid fa-arrow-left"></i></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <!--
+    ##################################################
+    #                     Brands                     #
+    ##################################################
+  -->
+  <section class="km-brands" id="brands">
+    <div class="container">
+      <div class="km-brands-head">
+        <div class="km-eyebrow justify-content-center">
+          <span class="km-eyebrow-line"></span>
+          <span class="km-eyebrow-text">شركاء النجاح</span>
+          <span class="km-eyebrow-line"></span>
+        </div>
+        <h2 class="km-brands-title">خدمات <span class="text-km-gradient">متكاملة</span> تحت سقف واحد</h2>
+      </div>
+    </div>
+
+    <div class="km-marquee">
+      <div class="km-marquee-track">
+        <ul class="km-marquee-list">
+          <li>Interior</li>
+          <li>Architecture</li>
+          <li>Planning</li>
+          <li>Renovation</li>
+          <li>Fit-Out</li>
+          <li>Styling</li>
+          <li>Turnkey</li>
+          <li>Management</li>
+          <li>Lighting</li>
+          <li>Furniture</li>
+        </ul>
+        <ul class="km-marquee-list" aria-hidden="true">
+          <li>Interior</li>
+          <li>Architecture</li>
+          <li>Planning</li>
+          <li>Renovation</li>
+          <li>Fit-Out</li>
+          <li>Styling</li>
+          <li>Turnkey</li>
+          <li>Management</li>
+          <li>Lighting</li>
+          <li>Furniture</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!--
+    ##################################################
+    #                 Why Touch of Class                #
+    ##################################################
+  -->
+  <section class="km-why" id="why">
+    <div class="km-why-bg" aria-hidden="true"></div>
+
+    <div class="container position-relative">
+      <div class="row g-4 g-xl-5 align-items-center">
+        <div class="col-lg-6">
+          <div class="km-eyebrow">
+            <span class="km-eyebrow-text">لماذا نحن</span>
+            <span class="km-eyebrow-line"></span>
+          </div>
+          <h2 class="km-why-title">لماذا تختار <span class="text-km-gradient"><bdi>Touch of Class</bdi></span>؟</h2>
+          <p class="km-why-desc">
+            شريكك في تصميم المساحات وتنفيذها، من الرسمة الأولى حتى التسليم، بتفاصيل تليق بالمكان وبمن يعيشون فيه.
+          </p>
+
+          <div class="km-why-features row g-3 g-sm-4">
+            <div class="col-sm-6">
+              <div class="km-feature h-100">
+                <span class="km-feature-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <div>
+                  <h3>جودة مضمونة</h3>
+                  <p>خامات وتفاصيل مدروسة، وتنفيذ يطابق التصميم.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="km-feature h-100">
+                <span class="km-feature-icon"><i class="fa-solid fa-user-gear"></i></span>
+                <div>
+                  <h3>خبرة فنية</h3>
+                  <p>مصممون يترجمون أسلوب حياتك لمساحة واضحة ومريحة.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="km-feature h-100">
+                <span class="km-feature-icon"><i class="fa-solid fa-truck-fast"></i></span>
+                <div>
+                  <h3>تنفيذ منظم</h3>
+                  <p>جدول واضح ومتابعة مستمرة حتى تصبح المساحة جاهزة.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="km-feature h-100">
+                <span class="km-feature-icon"><i class="fa-solid fa-headset"></i></span>
+                <div>
+                  <h3>متابعة بعد التسليم</h3>
+                  <p>نبقى متاحين بعد التسليم لأي تعديل أو ملاحظة تخص المساحة.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="km-stats">
+            <div class="row g-3 g-sm-4">
+              <div class="col-6">
+                <div class="km-stat">
+                  <strong><span>+</span><span class="km-counter" data-count="15">0</span></strong>
+                  <p>سنة خبرة في السوق</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="km-stat">
+                  <strong><span>+</span><span class="km-counter" data-count="2500">0</span></strong>
+                  <p>عميل يثق بنا</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="km-stat">
+                  <strong><span>+</span><span class="km-counter" data-count="600">0</span></strong>
+                  <p>مشروع تم تنفيذه</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="km-stat">
+                  <strong><span>+</span><span class="km-counter" data-count="1200">0</span></strong>
+                  <p>مشروع منجز</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--
+    ##################################################
+    #                    Articles                    #
+    ##################################################
+  -->
+  <section class="km-articles" id="articles">
+
+
+    <div class="container position-relative">
+      <div class="km-articles-head">
+        <div class="km-articles-intro">
+          <div class="km-eyebrow justify-content-center">
+            <span class="km-eyebrow-line"></span>
+            <span class="km-eyebrow-text">مقالاتنا</span>
+            <span class="km-eyebrow-line"></span>
+          </div>
+          <h2 class="km-articles-title"><span class="text-km-gradient">أحدث</span> المقالات</h2>
+          <p class="km-articles-desc">أفكار ونصائح في التصميم الداخلي والتجديد واختيار الخامات والإضاءة.</p>
+        </div>
+
+      </div>
+
+      <div class="km-articles-grid row g-3">
+        <div class="col-12 col-xl-4 order-xl-last">
+          <article class="km-article h-100 is-featured">
+            <img class="km-article-bg" src="./assets/images/studio/photo-1.jpg" sizes="(max-width: 991px) 92vw, 520px" width="1024" height="576" alt="مساحة داخلية من أعمال Touch of Class" loading="lazy" decoding="async"/>
+            <span class="km-article-badge">مقال مميز</span>
+            <div class="km-article-body">
+              <time class="km-article-date" datetime="2025-09-15"><i class="fa-regular fa-calendar-days"></i> 15 سبتمبر 2025</time>
+              <h3 class="km-article-title"><a href="./news-details.html">دليل اختيار أسلوب التصميم المناسب لبيتك</a></h3>
+              <p class="km-article-excerpt">إضاءة وخامات وتوزيع فراغات: أهم القرارات قبل أن تبدأ التصميم.</p>
+              <a href="./news-details.html" class="km-article-more" aria-label="اقرأ المزيد: دليل اختيار أسلوب التصميم">
+                <span class="km-article-more-icon"><i class="fa-solid fa-arrow-left"></i></span>
+                <span>اقرأ المزيد</span>
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-md-4 col-xl">
+          <article class="km-article h-100">
+            <a href="./news-details.html" class="km-article-media" tabindex="-1" aria-hidden="true">
+              <img src="./assets/images/studio/photo-2.jpg" width="640" height="480" alt="" loading="lazy" decoding="async"/>
+            </a>
+            <div class="km-article-body">
+              <time class="km-article-date" datetime="2025-08-10"><i class="fa-regular fa-calendar-days"></i> 10 أغسطس 2025</time>
+              <h3 class="km-article-title"><a href="./news-details.html">أنواع التصميم الداخلي وأين تستخدم</a></h3>
+              <p class="km-article-excerpt">من الكلاسيكي إلى الحديث: الفرق بين الأساليب ومتى يناسب كل منها المساحة.</p>
+              <a href="./news-details.html" class="km-article-more" aria-label="اقرأ المزيد: أنواع التصميم الداخلي">
+                <span class="km-article-more-icon"><i class="fa-solid fa-arrow-left"></i></span>
+                <span>اقرأ المزيد</span>
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-md-4 col-xl">
+          <article class="km-article h-100">
+            <a href="./news-details.html" class="km-article-media" tabindex="-1" aria-hidden="true">
+              <img src="./assets/images/studio/photo-3.jpg" width="640" height="480" alt="" loading="lazy" decoding="async"/>
+            </a>
+            <div class="km-article-body">
+              <time class="km-article-date" datetime="2025-08-28"><i class="fa-regular fa-calendar-days"></i> 28 أغسطس 2025</time>
+              <h3 class="km-article-title"><a href="./news-details.html">نصائح لإضاءة أدفأ وأكثر راحة</a></h3>
+              <p class="km-article-excerpt">كيفية توزيع الإضاءة لتبدو المساحة أوسع وأهدأ من دون تكلفة إضافية.</p>
+              <a href="./news-details.html" class="km-article-more" aria-label="اقرأ المزيد: نصائح الإضاءة">
+                <span class="km-article-more-icon"><i class="fa-solid fa-arrow-left"></i></span>
+                <span>اقرأ المزيد</span>
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-md-4 col-xl">
+          <article class="km-article h-100">
+            <a href="./news-details.html" class="km-article-media" tabindex="-1" aria-hidden="true">
+              <img src="./assets/images/studio/photo-4.jpg" width="640" height="480" alt="" loading="lazy" decoding="async"/>
+            </a>
+            <div class="km-article-body">
+              <time class="km-article-date" datetime="2025-09-02"><i class="fa-regular fa-calendar-days"></i> 2 سبتمبر 2025</time>
+              <h3 class="km-article-title"><a href="./news-details.html">تخطيط المكاتب المفتوحة</a></h3>
+              <p class="km-article-excerpt">كيفية تقسيم مساحة العمل بين التركيز والاجتماعات من دون ازدحام المكان.</p>
+              <a href="./news-details.html" class="km-article-more" aria-label="اقرأ المزيد: تخطيط المكاتب">
+                <span class="km-article-more-icon"><i class="fa-solid fa-arrow-left"></i></span>
+                <span>اقرأ المزيد</span>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center mt-5" data-anim="up">
+        <a href="./news.html" class="km-btn km-articles-all">
+          <span>عرض جميع المقالات</span>
+          <span class="km-btn-icon"><i class="fa-solid fa-arrow-left"></i></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!--
+  ##################################################
+  #                    Contact                     #
+  ##################################################
+  -->
+  <section class="km-contact" id="contact">
+    <div class="km-contact-bg" aria-hidden="true"></div>
+
+    <div class="container position-relative">
+      <div class="km-contact-grid">
+        <div class="row">
+          <div class="col-lg-4 me-lg-auto">
+            <div class="km-contact-head">
+              <div class="km-eyebrow">
+                <span class="km-eyebrow-text">اتصل بنا</span>
+                <span class="km-eyebrow-line"></span>
+              </div>
+              <h2 class="km-contact-title"><span class="text-km-gradient">تواصل</span> معـنا</h2>
+              <p class="km-contact-desc">
+                فريقنا جاهز لمساعدتك في ابدأ مشروعك الأنسب وتقديم الحلول المناسبة لمتطلبات مشروعك.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row g-4 mt-0">
+          <div class="col-lg-3 order-lg-3">
+            <div class="km-contact-info">
+              <ul class="km-contact-cards row g-3">
+                <li class="col-12 col-sm-6 col-lg-12">
+                  <div class="km-contact-item h-100">
+                    <span class="km-contact-icon"><i class="fa-solid fa-phone-volume"></i></span>
+                    <div>
+                      <h3>اتصل بنا</h3>
+                      <a href="tel:+201120846811" dir="ltr">+20 112 084 6811</a>
+                    </div>
+                  </div>
+                </li>
+                <li class="col-12 col-sm-6 col-lg-12">
+                  <div class="km-contact-item h-100">
+                    <span class="km-contact-icon"><i class="fa-regular fa-envelope"></i></span>
+                    <div>
+                      <h3>البريد الإلكتروني</h3>
+                      <a href="mailto:info@touchofclass.com">info@touchofclass.com</a>
+                    </div>
+                  </div>
+                </li>
+                <li class="col-12 col-sm-6 col-lg-12">
+                  <div class="km-contact-item h-100">
+                    <span class="km-contact-icon"><i class="fa-solid fa-location-dot"></i></span>
+                    <div>
+                      <h3>العنوان</h3>
+                      <p>القاهرة، جمهورية مصر العربية</p>
+                    </div>
+                  </div>
+                </li>
+                <li class="col-12 col-sm-6 col-lg-12">
+                  <div class="km-contact-item h-100">
+                    <span class="km-contact-icon"><i class="fa-regular fa-clock"></i></span>
+                    <div>
+                      <h3>مواعيد العمل</h3>
+                      <p>من السبت إلى الخميس<br/>9:00 صباحًا – 6:00 مساءً</p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="km-contact-socials">
+                <a href="#" aria-label="فيسبوك"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="يوتيوب"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 order-lg-2">
+            <div class="km-contact-card">
+              <h3 class="km-contact-card-title">
+                <span class="km-contact-card-line"></span>
+                <span><span class="text-km-gradient">أرسل</span> لنـا استفسـارك</span>
+              </h3>
+              <p class="km-contact-card-desc">قم بملء النموذج وسيتواصل معك فريقنا في أقرب وقت.</p>
+
+              <form class="row g-3 needs-validation" id="contact-form" action="#" method="post" novalidate>
+                <div class="col-md-6">
+                  <label for="contact-name" class="km-label">الاسم الكامل <span>*</span></label>
+                  <div class="km-contact-field">
+                    <input type="text" id="contact-name" name="name" class="km-input" placeholder="أدخل اسمك" autocomplete="name" required/>
+                    <i class="fa-regular fa-user"></i>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="contact-email" class="km-label">البريد الإلكتروني <span>*</span></label>
+                  <div class="km-contact-field">
+                    <input type="email" id="contact-email" name="email" class="km-input" placeholder="أدخل بريدك الإلكتروني" autocomplete="email" required/>
+                    <i class="fa-regular fa-envelope"></i>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="contact-phone" class="km-label">رقم الهاتف <span>*</span></label>
+                  <div class="km-contact-field">
+                    <input type="tel" id="contact-phone" name="phone" class="km-input" placeholder="أدخل رقم الهاتف" autocomplete="tel" required/>
+                    <i class="fa-solid fa-phone"></i>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="contact-type" class="km-label">نوع الطلب</label>
+                  <select id="contact-type" name="type" class="km-input km-select">
+                    <option value="" selected disabled>اختر نوع الطلب</option>
+                    <option value="quote">طلب عرض سعر</option>
+                    <option value="interior">تصميم داخلي</option>
+                    <option value="renovation">تجديد منزل</option>
+                    <option value="other">استفسار عام</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label for="contact-message" class="km-label">الرسالة <span>*</span></label>
+                  <div class="km-contact-field is-textarea">
+                    <textarea id="contact-message" name="message" class="km-input" rows="3" placeholder="اكتب رسالتك هنا..." required></textarea>
+                    <i class="fa-regular fa-message"></i>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="km-btn km-btn-block km-contact-submit">
+                    <span>إرسال الرسالة</span>
+                    <span class="km-btn-icon"><i class="fa-regular fa-paper-plane"></i></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-4 order-lg-1 d-flex">
+            <div class="km-contact-map w-100">
+              <iframe
+                src="https://www.google.com/maps?q=Cairo,Egypt&z=13&output=embed"
+                title="موقع Touch of Class على الخريطة"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+              <a class="km-contact-map-link" href="https://www.google.com/maps?q=Cairo,Egypt" target="_blank" rel="noopener">
+                <span>موقعنا على الخريطة</span>
+                <i class="fa-solid fa-angle-left"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+@endsection
