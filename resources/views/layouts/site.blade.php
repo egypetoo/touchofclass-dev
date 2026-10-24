@@ -46,6 +46,7 @@
     </div>
 
     @include('partials.site.scripts')
+    @stack('scripts')
 </body>
 
 </html>
