@@ -4913,7 +4913,7 @@ textarea.km-input {
   --km-f-text: #474a4c;
   --km-f-pump-w: 424px;
   position: relative;
-  padding-top: 106px;
+  padding-top: 20px;
   background: var(--white-color);
   color: var(--km-f-text);
   overflow: hidden;
