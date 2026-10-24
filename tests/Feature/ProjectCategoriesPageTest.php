@@ -24,6 +24,8 @@ it('shows every industry card on the industries page without category tabs', fun
         ->get('/projects');
 
     $response->assertOk()
+        ->assertSee('km-projects-grid', false)
+        ->assertDontSee('km-products-swiper', false)
         ->assertSee('km-album', false)
         ->assertSee('data-cat="residential"', false)
         ->assertDontSee('industry-bento-card', false)

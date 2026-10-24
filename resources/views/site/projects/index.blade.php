@@ -9,7 +9,7 @@
         :crumb-title="__('site.industries')"
     />
 
-    <section class="km-products" id="products">
+    <section class="km-products is-static-grid" id="products">
         <div class="container position-relative">
             <div class="km-products-tabs" role="tablist" aria-label="{{ __('site.projects_title') }}">
                 <div class="row g-2 g-lg-0">
@@ -56,30 +56,21 @@
                 @forelse ($projectCategories as $category)
                     <div class="tab-pane fade {{ ($activeProjectCategory['slug'] ?? '') === $category['slug'] ? 'show active' : '' }}" id="km-pane-{{ $category['slug'] }}" role="tabpanel" aria-labelledby="km-tab-{{ $category['slug'] }}" tabindex="0">
                         <div class="km-products-stage">
-                            <div class="swiper km-products-swiper" aria-label="{{ $category['name'] }}">
-                                <div class="swiper-wrapper">
-                                    @foreach ($category['projects'] as $project)
-                                        <div class="swiper-slide" data-value="{{ $project['value'] }}">
-                                            <article class="km-product-card km-album">
-                                                <div class="km-product-media km-album-photos">
-                                                    @foreach ($project['images'] as $image)
-                                                        <a href="{{ $image }}" data-index="{{ $loop->index }}"><img src="{{ $image }}" alt="{{ $project['name'] }}" loading="lazy" decoding="async"></a>
-                                                    @endforeach
-                                                </div>
-                                                <div class="km-product-body">
-                                                    <h4 class="km-product-name km-album-name">{{ $project['name'] }}</h4>
-                                                </div>
-                                            </article>
+                            <div class="km-projects-grid" aria-label="{{ $category['name'] }}">
+                                @foreach ($category['projects'] as $project)
+                                    <article class="km-product-card km-album" data-value="{{ $project['value'] }}">
+                                        <div class="km-product-media km-album-photos">
+                                            @foreach ($project['images'] as $image)
+                                                <a href="{{ $image }}" data-index="{{ $loop->index }}"><img src="{{ $image }}" alt="{{ $project['name'] }}" loading="lazy" decoding="async"></a>
+                                            @endforeach
                                         </div>
-                                    @endforeach
-                                </div>
+                                        <div class="km-product-body">
+                                            <h4 class="km-product-name km-album-name">{{ $project['name'] }}</h4>
+                                        </div>
+                                    </article>
+                                @endforeach
                             </div>
                             <p class="km-products-empty" hidden>{{ __('site.no_projects') }}</p>
-                        </div>
-                        <div class="km-products-nav">
-                            <button type="button" class="km-products-arrow km-products-prev" aria-label="{{ __('site.home_previous') }}"><i class="fa-solid fa-arrow-right"></i></button>
-                            <div class="km-products-dots"></div>
-                            <button type="button" class="km-products-arrow km-products-next" aria-label="{{ __('site.home_next') }}"><i class="fa-solid fa-arrow-left"></i></button>
                         </div>
                     </div>
                 @empty

@@ -725,14 +725,16 @@ function initProductsCatalog() {
 
   // each tab pane keeps its own cards (written in the HTML) and its own slider
   const panes = Array.from(section.querySelectorAll(".km-products-panes .tab-pane")).map(function (el) {
-    const wrapper = el.querySelector(".swiper-wrapper");
+    const wrapper = el.querySelector(".swiper-wrapper") || el.querySelector(".km-projects-grid");
+    const staticGrid = wrapper.classList.contains("km-projects-grid");
     return {
       el: el,
       wrapper: wrapper,
       swiperEl: el.querySelector(".km-products-swiper"),
       empty: el.querySelector(".km-products-empty"),
       swiper: null,
-      slides: Array.from(wrapper.querySelectorAll(".swiper-slide")).map(function (slide) {
+      staticGrid: staticGrid,
+      slides: Array.from(wrapper.querySelectorAll(staticGrid ? ".km-product-card" : ".swiper-slide")).map(function (slide) {
         return { el: slide, value: +slide.dataset.value || 0, name: slide.querySelector(".km-product-name").textContent.trim() };
       }),
     };
@@ -767,7 +769,7 @@ function initProductsCatalog() {
 
   function buildSwiper(pane) {
     destroySwiper(pane);
-    if (view !== "grid" || typeof Swiper === "undefined") return;
+    if (pane.staticGrid || view !== "grid" || typeof Swiper === "undefined") return;
 
     pane.swiper = new Swiper(pane.swiperEl, {
       slidesPerView: 1.15,
