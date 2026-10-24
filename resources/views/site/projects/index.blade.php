@@ -1,13 +1,18 @@
 @extends('layouts.site')
 
 @section('content')
-    <x-site.breadcrumb
-        :image="$projects_breadcrumb?->imageUrl('sliders/slider1.jpg')"
-        :title="$projects_breadcrumb?->title ?: __('site.industries')"
-        :subtitle="$projects_breadcrumb?->text ? strip_tags($projects_breadcrumb->text) : null"
-        :eyebrow="$projects_breadcrumb?->sub_title ?: __('site.our_markets')"
-        :crumb-title="__('site.industries')"
-    />
+    <section class="km-page-header">
+        <img class="km-page-header-bg" src="{{ asset('assets/images/hero/hero-1.webp') }}" width="1920" height="1080" alt="" aria-hidden="true" fetchpriority="high" />
+        <div class="container position-relative text-center">
+            <h1 class="km-page-title" data-anim="up">{{ $projects_breadcrumb?->title ?: __('site.projects') }}</h1>
+            <nav aria-label="breadcrumb" data-anim="up">
+                <ol class="breadcrumb km-breadcrumb justify-content-center mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('site.home') }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $projects_breadcrumb?->title ?: __('site.projects') }}</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
 
     <section class="km-products is-static-grid" id="products">
         <div class="container position-relative">

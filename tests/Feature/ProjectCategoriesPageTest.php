@@ -24,6 +24,8 @@ it('shows every industry card on the industries page without category tabs', fun
         ->get('/projects');
 
     $response->assertOk()
+        ->assertSee('km-page-header', false)
+        ->assertSee(__('site.projects'), false)
         ->assertSee('km-projects-grid', false)
         ->assertDontSee('km-products-swiper', false)
         ->assertSee('km-album', false)
