@@ -80,22 +80,23 @@ class ContactUsController extends Controller
         $message = ContactMessage::create($validated);
         $message->load('service');
 
+        $requestType = $message->service?->getTranslation('title', 'en') ?: $message->project_type;
+
         $notification = [
-            __('site.name') => $message->name,
-            __('site.email') => $message->email,
-            __('site.phone') => $message->phone,
-            __('site.message') => $message->message,
-            __('site.interested_in') => $message->project_type,
-            __('site.service') => $message->service?->getTranslation('title', app()->getLocale()),
+            'Request type' => $requestType,
+            'Name' => $message->name,
+            'Phone' => $message->phone,
+            'Email' => $message->email,
+            'Message' => $message->message,
         ];
 
         if (filled($message->utm_source)) {
-            $notification[__('admin_trans.utm_platform')] = $utmAttribution->platformLabel($message->utm_source)
+            $notification['Source'] = $utmAttribution->platformLabel($message->utm_source)
                 ?? $message->utm_source;
         }
 
         if (filled($message->utm_campaign)) {
-            $notification[__('admin_trans.utm_campaign')] = $message->utm_campaign;
+            $notification['Campaign'] = $message->utm_campaign;
         }
 
         $mailer->sendContactNotification($notification);

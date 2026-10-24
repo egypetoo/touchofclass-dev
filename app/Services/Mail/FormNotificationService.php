@@ -51,8 +51,8 @@ class FormNotificationService
         }
 
         $appName = $this->siteName();
-        $subject = __('admin_trans.contact_form_email_subject', ['site' => $appName]);
-        $html = $this->buildContactHtml($appName, $data);
+        $subject = 'New request from '.$appName;
+        $html = $this->contactMessageHtml($appName, $data);
 
         return $this->sendHtml($recipients, $subject, $html);
     }
@@ -64,11 +64,19 @@ class FormNotificationService
         $appName = $this->siteName();
 
         if ($type === 'contact') {
-            $subject = __('admin_trans.test_contact_form').' - '.$appName;
-            $html = $this->buildContactTestHtml($appName);
+            $subject = 'New request from '.$appName;
+            $html = $this->contactMessageHtml($appName, [
+                'Request type' => 'Interior design',
+                'Name' => 'Sarah Samir',
+                'Phone' => '01112302002',
+                'Email' => 'info@touchofclass-eg.com',
+                'Message' => 'I would like to book a consultation for a residential project.',
+            ]);
         } else {
-            $subject = __('admin_trans.test_notification').' - '.$appName;
-            $html = $this->buildNotificationTestHtml($appName);
+            $subject = 'Test notification - '.$appName;
+            $html = $this->contactMessageHtml($appName, [
+                'Message' => 'If you received this message, notification emails are working.',
+            ]);
         }
 
         Mail::html($html, fn ($mail) => $mail->to($recipient)->subject($subject));
@@ -94,42 +102,42 @@ class FormNotificationService
         }
     }
 
-    protected function buildContactHtml(string $appName, array $data): string
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function contactMessageHtml(string $appName, array $data): string
     {
-        $rows = '';
+        $rows = [];
+
         foreach ($data as $label => $value) {
             if (blank($value)) {
                 continue;
             }
-            $rows .= '<tr><td style="padding:8px;border:1px solid #eee;font-weight:600;">'.e($label).'</td>';
-            $rows .= '<td style="padding:8px;border:1px solid #eee;">'.e((string) $value).'</td></tr>';
+
+            $rows[] = [
+                'icon' => $this->rowIcon((string) $label),
+                'label' => (string) $label,
+                'value' => (string) $value,
+            ];
         }
 
-        return "<!DOCTYPE html><html><body style='font-family:Arial,sans-serif;'>
-            <h2>".e(__('admin_trans.new_contact_message'))." — {$appName}</h2>
-            <table style='border-collapse:collapse;width:100%;max-width:600px;'>{$rows}</table>
-        </body></html>";
+        return view('mail.contact-notification', [
+            'title' => 'New request from '.$appName,
+            'rows' => $rows,
+        ])->render();
     }
 
-    protected function buildNotificationTestHtml(string $appName): string
+    private function rowIcon(string $label): string
     {
-        $timestamp = now()->format('Y-m-d H:i:s');
-
-        return "<!DOCTYPE html><html><body style='font-family:Arial,sans-serif;padding:24px;'>
-            <h2>".e(__('admin_trans.test_notification'))."</h2>
-            <p>".e(__('admin_trans.test_email_success_body'))."</p>
-            <p><strong>{$appName}</strong><br>{$timestamp}</p>
-        </body></html>";
-    }
-
-    protected function buildContactTestHtml(string $appName): string
-    {
-        $timestamp = now()->format('Y-m-d H:i:s');
-
-        return "<!DOCTYPE html><html><body style='font-family:Arial,sans-serif;padding:24px;'>
-            <h2>".e(__('admin_trans.test_contact_form'))."</h2>
-            <p>".e(__('admin_trans.test_contact_email_success_body'))."</p>
-            <p><strong>{$appName}</strong><br>{$timestamp}</p>
-        </body></html>";
+        return match ($label) {
+            'Name' => '👤',
+            'Phone' => '📱',
+            'Email' => '✉️',
+            'Request type' => '📋',
+            'Message' => '💬',
+            'Source' => '🔗',
+            'Campaign' => '📣',
+            default => '📋',
+        };
     }
 }
