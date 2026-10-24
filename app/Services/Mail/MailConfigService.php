@@ -54,6 +54,19 @@ class MailConfigService
             $encryption = null;
         }
 
-        Config::set('mail.mailers.smtp.scheme', $encryption);
+        Config::set('mail.mailers.smtp.scheme', $this->smtpScheme($encryption));
+    }
+
+    /**
+     * Symfony's SMTP mailer only accepts the smtp and smtps schemes.
+     * Dashboard values stay tls/ssl so existing settings do not need to be re-saved.
+     */
+    private function smtpScheme(?string $encryption): ?string
+    {
+        return match ($encryption) {
+            'ssl', 'smtps' => 'smtps',
+            'tls', 'smtp' => 'smtp',
+            default => null,
+        };
     }
 }
