@@ -13,8 +13,9 @@
   {{-- @include('site.home._brands') --}}
 
   @include('site.home._why_us')
-
-  @include('site.home._blogs')
+  @if ($homeFeaturedArticle)
+    @include('site.home._blogs')
+  @endif
 
   @include('site.home._contact')
 

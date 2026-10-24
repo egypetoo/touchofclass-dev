@@ -21,7 +21,6 @@
           </div>
     
           <div class="km-articles-grid row g-3">
-            @if ($homeFeaturedArticle)
             <div class="col-12 col-xl-4 order-xl-last">
               <article class="km-article h-100 is-featured">
                 <img class="km-article-bg" src="{{ $homeFeaturedArticle['image'] }}" sizes="(max-width: 991px) 92vw, 520px" width="1024" height="576" alt="{{ $homeFeaturedArticle['alt'] }}" loading="lazy" decoding="async"/>
