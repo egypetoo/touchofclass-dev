@@ -367,21 +367,6 @@ function initServiceCardTilt(cards) {
 prepareAnimations();
 prepareServiceCards();
 
-// Loader. The hero has to paint without waiting for the rest of the page.
-function hideLoader() {
-  const loading = document.querySelector(".loading");
-  if (!loading || loading.classList.contains("loaded")) return;
-  loading.classList.add("loaded");
-  loading.style.display = "none";
-  startAnimations();
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", hideLoader);
-} else {
-  hideLoader();
-}
-
 // Back To Top
 const backTop = document.getElementById("back-top");
 
@@ -631,6 +616,18 @@ function initHeroSlider(hero) {
 }
 
 document.querySelectorAll("section.hero").forEach(initHeroSlider);
+
+// Deferred scripts run while the document is already interactive, so this must
+// happen after the hero swiper exists. Otherwise the intro hides the copy and never reveals it.
+function hideLoader() {
+  const loading = document.querySelector(".loading");
+  if (!loading || loading.classList.contains("loaded")) return;
+  loading.classList.add("loaded");
+  loading.style.display = "none";
+  startAnimations();
+}
+
+hideLoader();
 
 function initServicesSlider() {
   const slider = document.querySelector(".services-swiper");
