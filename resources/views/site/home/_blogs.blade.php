@@ -36,7 +36,6 @@
                 </div>
               </article>
             </div>
-            @endif
             @foreach ($homeArticles as $article)
             <div class="col-md-4 col-xl">
               <article class="km-article h-100">
