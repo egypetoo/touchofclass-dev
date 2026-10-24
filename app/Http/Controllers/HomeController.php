@@ -406,12 +406,12 @@ class HomeController extends Controller
 
     /**
      * @param  Collection<int, Section>  $heroes
-     * @return list<array{eyebrow: string, lines: list<string>, text: string, button: string, url: string, image: string, alt: string}>
+     * @return list<array{eyebrow: string, lines: list<string>, text: string, button: string, url: string, image: string, imageMobile: string, alt: string}>
      */
     private function heroSlides(Collection $heroes): array
     {
         if ($heroes->isEmpty()) {
-            return [
+            return $this->withHeroPictures([
                 [
                     'eyebrow' => __('site.home_brand'),
                     'lines' => __('site.home_hero_1_lines'),
@@ -439,10 +439,10 @@ class HomeController extends Controller
                     'image' => asset('assets/images/hero/hero-3.webp'),
                     'alt' => __('site.home_hero_3_alt'),
                 ],
-            ];
+            ]);
         }
 
-        return $heroes->map(function (Section $section): array {
+        return $this->withHeroPictures($heroes->map(function (Section $section): array {
             $lines = $section->titleLines();
 
             return [
@@ -454,6 +454,26 @@ class HomeController extends Controller
                 'image' => $section->imageUrl('hero/hero-1.webp'),
                 'alt' => (string) ($section->alt_image ?: $section->title),
             ];
-        })->all();
+        })->all());
+    }
+
+    /**
+     * @param  list<array{eyebrow: string, lines: list<string>, text: string, button: string, url: string, image: string, alt: string}>  $slides
+     * @return list<array{eyebrow: string, lines: list<string>, text: string, button: string, url: string, image: string, imageMobile: string, alt: string}>
+     */
+    private function withHeroPictures(array $slides): array
+    {
+        return array_map(function (array $slide, int $index): array {
+            $source = $slide['image'];
+
+            if ($index === 0) {
+                $slide['image'] = Path::displayImage($source, 1600);
+                $slide['imageMobile'] = Path::displayImage($source, 960);
+            } else {
+                $slide['imageMobile'] = $source;
+            }
+
+            return $slide;
+        }, $slides, array_keys($slides));
     }
 }

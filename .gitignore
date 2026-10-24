@@ -20,6 +20,7 @@
 /public/sitemap.xml
 /public/sitemap_*.xml
 /storage/app/public/sitemap
+/storage/app/public/optimized
 /storage/*.key
 /storage/pail
 /vendor

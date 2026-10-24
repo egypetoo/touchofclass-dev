@@ -367,32 +367,20 @@ function initServiceCardTilt(cards) {
 prepareAnimations();
 prepareServiceCards();
 
-// Loader
+// Loader. The hero has to paint without waiting for the rest of the page.
 function hideLoader() {
   const loading = document.querySelector(".loading");
   if (!loading || loading.classList.contains("loaded")) return;
   loading.classList.add("loaded");
-
-  if (!motionOn) {
-    loading.style.display = "none";
-    startAnimations();
-    return;
-  }
-
-  gsap
-    .timeline({
-      onComplete: function () {
-        loading.style.display = "none";
-      },
-    })
-    .to(loading.querySelectorAll(".loader-container"), { autoAlpha: 0, scale: 0.9, duration: 0.4, ease: "power2.in" })
-    .to(loading, { yPercent: -100, duration: 0.9, ease: "power4.inOut" })
-    .add(startAnimations, "-=0.45");
+  loading.style.display = "none";
+  startAnimations();
 }
 
-window.addEventListener("load", hideLoader);
-// don't keep the page hidden if a heavy asset is slow to load
-setTimeout(hideLoader, 3000);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", hideLoader);
+} else {
+  hideLoader();
+}
 
 // Back To Top
 const backTop = document.getElementById("back-top");
@@ -666,7 +654,7 @@ initServicesSlider();
 
 // only the first slide's photo is needed for the first paint; the rest load once the page is in
 function loadHeroBackgrounds() {
-  document.querySelectorAll(".hero-slide[data-bg]").forEach(function (slide) {
+  document.querySelectorAll(".hero-slide-bg[data-bg]").forEach(function (slide) {
     slide.style.setProperty("--slide-bg", 'url("' + new URL(slide.dataset.bg, document.baseURI).href + '")');
   });
 }

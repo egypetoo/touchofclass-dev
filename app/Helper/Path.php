@@ -208,6 +208,83 @@ class Path
         return public_path('storage/'.$relative);
     }
 
+    /**
+     * A smaller WebP copy for on-screen use. The original stays available for the lightbox.
+     */
+    public static function displayImage(string $url, int $maxWidth): string
+    {
+        $absolute = self::localStorageAbsolutePath($url);
+
+        if ($absolute === null || ! is_file($absolute) || ! function_exists('imagewebp')) {
+            return $url;
+        }
+
+        $info = @getimagesize($absolute);
+
+        if ($info === false) {
+            return $url;
+        }
+
+        $width = (int) $info[0];
+        $type = (int) $info[2];
+        $alreadySmallEnough = $width <= $maxWidth && $type === IMAGETYPE_WEBP && filesize($absolute) <= 180_000;
+
+        if ($alreadySmallEnough) {
+            return $url;
+        }
+
+        $name = substr(sha1($absolute.'|'.filemtime($absolute).'|'.$maxWidth), 0, 20).'.webp';
+        $target = storage_path('app/public/optimized/'.$name);
+
+        if (! is_file($target) && ! self::writeDisplayWebp($absolute, $target, $maxWidth, $info)) {
+            return $url;
+        }
+
+        return asset('storage/optimized/'.$name);
+    }
+
+    /**
+     * @param  array{0: int, 1: int, 2: int}  $info
+     */
+    private static function writeDisplayWebp(string $source, string $target, int $maxWidth, array $info): bool
+    {
+        $image = match ($info[2]) {
+            IMAGETYPE_JPEG => @imagecreatefromjpeg($source),
+            IMAGETYPE_PNG => @imagecreatefrompng($source),
+            IMAGETYPE_WEBP => @imagecreatefromwebp($source),
+            default => false,
+        };
+
+        if ($image === false) {
+            return false;
+        }
+
+        $width = (int) $info[0];
+        $height = (int) $info[1];
+        $targetWidth = min($maxWidth, $width);
+        $targetHeight = (int) max(1, round($height * ($targetWidth / max($width, 1))));
+        $canvas = imagecreatetruecolor($targetWidth, $targetHeight);
+
+        if ($canvas === false) {
+            imagedestroy($image);
+
+            return false;
+        }
+
+        imagecopyresampled($canvas, $image, 0, 0, 0, 0, $targetWidth, $targetHeight, $width, $height);
+        $directory = dirname($target);
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0775, true);
+        }
+
+        $written = imagewebp($canvas, $target, 72);
+        imagedestroy($image);
+        imagedestroy($canvas);
+
+        return $written && is_file($target);
+    }
+
     public static function mimeTypeForAssetUrl(string $url): string
     {
         $path = strtolower((string) (parse_url($url, PHP_URL_PATH) ?: $url));

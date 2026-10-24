@@ -126,3 +126,41 @@ it('exposes King Motors hero design paths', function () {
         ->and(Path::heroDesignImages()[0])->toBe('hero/hero-1.webp')
         ->and(Path::heroDesignMobileImages()[0])->toBe('hero/hero-800.webp');
 });
+
+it('builds a smaller webp for a wide local photo', function () {
+    if (! function_exists('imagewebp')) {
+        test()->markTestSkipped('GD webp is unavailable');
+    }
+
+    $relative = 'media/path-display-hero-test.jpg';
+    $publicFile = public_path('storage/'.$relative);
+    $directory = dirname($publicFile);
+
+    if (! is_dir($directory)) {
+        mkdir($directory, 0777, true);
+    }
+
+    $image = imagecreatetruecolor(1200, 200);
+    imagejpeg($image, $publicFile, 90);
+    imagedestroy($image);
+
+    $generated = null;
+
+    try {
+        $url = Path::displayImage(asset('storage/'.$relative), 960);
+        $path = parse_url($url, PHP_URL_PATH);
+        $generated = public_path(ltrim((string) $path, '/'));
+        $info = getimagesize($generated);
+
+        expect($url)->toContain('/storage/optimized/')
+            ->and($url)->toEndWith('.webp')
+            ->and($info)->not->toBeFalse()
+            ->and($info[0])->toBeLessThanOrEqual(960);
+    } finally {
+        @unlink($publicFile);
+
+        if (is_string($generated)) {
+            @unlink($generated);
+        }
+    }
+});

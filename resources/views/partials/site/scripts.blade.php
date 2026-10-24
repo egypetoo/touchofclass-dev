@@ -1,10 +1,10 @@
 <!-- js -->
-<script src="{{ Path::jsPath('bootstrap.bundle.min.js') }}"></script> 
-<script src="{{ Path::jsPath('gsap.min.js') }}"></script>
-<script src="{{ Path::jsPath('lenis.min.js') }}"></script>
-<script src="{{ Path::jsPath('swiper-bundle.min.js') }}"></script>
-<script src="{{ Path::jsPath('partials.js') }}"></script>
-<script src="{{ Path::jsPath('main.js') }}"></script>
+<script src="{{ Path::jsPath('bootstrap.bundle.min.js') }}" defer></script>
+<script src="{{ Path::jsPath('gsap.min.js') }}" defer></script>
+<script src="{{ Path::jsPath('lenis.min.js') }}" defer></script>
+<script src="{{ Path::jsPath('swiper-bundle.min.js') }}" defer></script>
+<script src="{{ Path::jsPath('partials.js') }}" defer></script>
+<script src="{{ Path::jsPath('main.js') }}" defer></script>
 <script>
   (function () {
     var box = document.getElementById("km-lightbox");

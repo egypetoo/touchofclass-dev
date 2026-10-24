@@ -117,7 +117,7 @@
     >
       <div class="offcanvas-header border-bottom border-light border-opacity-10">
         <a class="navbar-brand" href="{{ route('home') }}" id="mobileMenuLabel">
-          <img src="{{ $siteLogoUrl ?? asset('assets/images/logo/logo-clear.png') }}" alt="{{ $siteDisplayName }}" width="104" height="48" loading="lazy"/>
+          <img src="{{ $siteLogoUrl ?? asset('assets/images/logo/logo-clear.png') }}" alt="{{ $siteDisplayName }}" width="104" height="48" />
         </a>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="إغلاق"></button>
       </div>

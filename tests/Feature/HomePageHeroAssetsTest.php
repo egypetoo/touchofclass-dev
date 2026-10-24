@@ -30,6 +30,9 @@ it('serves King Motors hero assets and the design scripts on the home page', fun
 
     $response->assertOk()
         ->assertSee('hero/hero-1.webp', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee('rel="preload" as="image"', false)
+        ->assertDontSee('Noto+Naskh', false)
         ->assertSee('hero-slider', false)
         ->assertSee('btn-hero-gold', false)
         ->assertSee('lenis.min.js', false)

@@ -6,7 +6,7 @@
       <!-- Slide 1 -->
       @foreach ($heroSlides as $image)
         <div class="swiper-slide hero-slide">
-          <div class="hero-slide-bg"></div>
+          <div class="hero-slide-bg" @if ($loop->first) style="--slide-bg: url('{{ $image['image'] }}')" @else data-bg="{{ $image['image'] }}" @endif></div>
           <div class="container-fluid px-3 px-md-5 h-100">
             <div class="row min-vh-100 align-items-center">
               <div class="col-12 ">
@@ -90,12 +90,16 @@
           <div class="hero-mobile-media">
             <img
               class="hero-mobile-img"
-              src="{{ $image['image'] }}"
-              @unless ($loop->first)
+              src="{{ $image['imageMobile'] }}"
+              srcset="{{ $image['imageMobile'] }} 960w, {{ $image['image'] }} 1600w"
+              sizes="100vw"
+              @if ($loop->first)
+                fetchpriority="high"
+              @else
                 loading="lazy"
-              @endunless
-              width="1920"
-              height="1080"
+              @endif
+              width="960"
+              height="540"
               alt="{{ $image['alt'] }}"
               decoding="async"
             >

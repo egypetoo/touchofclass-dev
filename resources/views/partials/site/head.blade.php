@@ -10,14 +10,15 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&display=swap" />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" /></noscript>
 
-<link rel="preload" as="image" href="{{ $siteLogoUrl ?? asset('assets/images/logo/logo-clear.png') }}" />
-@if (request()->routeIs('home'))
-    <link rel="preload" as="image" href="{{ $siteLogoUrl ?? asset('assets/images/hero/hero-1.webp') }}" fetchpriority="high" />
+@if (request()->routeIs('home') && isset($heroSlides[0]['imageMobile']))
+    <link rel="preload" as="image" href="{{ $heroSlides[0]['imageMobile'] }}" fetchpriority="high" />
 @endif
 
-<link rel="stylesheet" href="{{ Path::cssPath('all.min.css') }}" />
+<link rel="stylesheet" href="{{ Path::cssPath('all.min.css') }}" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="{{ Path::cssPath('all.min.css') }}" /></noscript>
 <link rel="stylesheet" href="{{ Path::cssPath('bootstrap.min.css') }}" />
 <link rel="stylesheet" href="{{ Path::cssPath('swiper-bundle.min.css') }}" />
 <link rel="stylesheet" href="{{ Path::cssPath('lenis.css') }}" />
