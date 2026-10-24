@@ -131,8 +131,4 @@
   @endif
 </footer>
 
-<div class="back-to-top" id="back-top">
-  <button type="button" class="d-flex justify-content-center align-items-center" aria-label="{{ __('site.back_to_top') }}">
-    <i class="fas fa-chevron-up"></i>
-  </button>
-</div>
+
