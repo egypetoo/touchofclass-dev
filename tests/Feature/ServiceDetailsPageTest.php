@@ -13,7 +13,7 @@ it('renders the King Motors service details layout', function () {
     $this->seed(DemoContentSeeder::class);
 
     $service = Service::query()
-        ->where('slug->en', 'warranty-maintenance')
+        ->where('slug->en', 'home-renovation')
         ->firstOrFail();
 
     $response = $this
@@ -28,11 +28,11 @@ it('renders the King Motors service details layout', function () {
         ->assertSee('km-page-title', false)
         ->assertSee($service->title, false)
         ->assertSee('km-sd-sidebar', false)
-        ->assertSee('Technical Consulting', false)
+        ->assertSee('Interior Design', false)
         ->assertSee('name="service_id"', false)
         ->assertSee(__('site.service_submit'), false)
-        ->assertDontSee('صيانة بالضمان', false)
-        ->assertDontSee('استشارات', false);
+        ->assertDontSee('تجديد المنازل', false)
+        ->assertDontSee('التصميم الداخلي', false);
 
     $this->post(route('contact.store'), [
         'name' => 'Service Visitor',

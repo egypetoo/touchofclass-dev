@@ -47,7 +47,7 @@
             <p class="km-chero-desc" data-anim="up">{{ $heroDesc }}</p>
             <div class="km-chero-actions" data-anim="up">
               @if ($primaryPhone)
-                <a class="km-chero-btn is-gold" href="{{ $primaryPhone['tel'] }}">
+                <a class="km-chero-btn is-gold" href="tel:{{ $primaryPhone['tel'] }}">
                   <i class="fa-solid fa-phone-volume"></i>
                   <span>{{ __('site.contact_call_now') }}</span>
                 </a>
@@ -227,7 +227,7 @@
           </a>
         @endif
         @if ($primaryPhone)
-          <a class="km-channel col-md-4" href="{{ $primaryPhone['tel'] }}">
+          <a class="km-channel col-md-4" href="tel:{{ $primaryPhone['tel'] }}">
             <span class="km-channel-icon"><i class="fa-solid fa-phone-volume"></i></span>
             <h3>{{ $phoneCard?->title ?: __('site.contact_phone_direct') }}</h3>
             <p>{{ $phoneCard?->text ? trim(strip_tags($phoneCard->text)) : __('site.contact_phone_desc') }}</p>

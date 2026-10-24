@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://king-motors.test/sitemap.xml
+Sitemap: https://touchofclass.test/sitemap.xml

@@ -30,6 +30,7 @@ return [
 
     // Common fields
     'title' => 'Title',
+    'second_title' => 'Second title',
     'title_en' => 'Title English',
     'title_ar' => 'Title Arabic',
     'sub_title' => 'Sub Title',

@@ -25,5 +25,5 @@ it('falls back to the design logo when the uploaded file is missing', function (
         'logo_ar_path' => 'site/missing.png',
     ]);
 
-    expect($setting->logoUrl())->toBe(asset('assets/images/logo/logo-transparent.webp'));
+    expect($setting->logoUrl())->toBe(asset('assets/images/logo/logo-clear.png'));
 });

@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Organization;
+use App\Models\Product;
 use App\Models\Service;
 use App\Models\SiteSetting;
 use Database\Seeders\DemoContentSeeder;
@@ -10,9 +12,43 @@ use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 use Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 
+function seedPumpSelectorCatalogue(): void
+{
+    $category = Category::query()->where('slug->en', 'deep-well-pumps')->first()
+        ?? Category::query()->create([
+            'organization_id' => Organization::query()->firstOrFail()->id,
+            'name' => ['en' => 'Deep Well Pumps', 'ar' => 'طلمبات اعماق'],
+            'slug' => ['en' => 'deep-well-pumps', 'ar' => 'deep-well-pumps'],
+            'order' => 90,
+        ]);
+
+    $category->update(['is_active' => true]);
+
+    $pumps = [
+        ['KM-P-GOLD', 'GOLD', ['highlights' => ['270 m³/h']]],
+        ['KM-P-VANSAN', 'VAN SAN', ['brand' => 'VAN SAN']],
+        ['KM-P-SP', 'SP', ['highlights' => ['42 m³/h']]],
+    ];
+
+    foreach ($pumps as [$code, $name, $specifications]) {
+        Product::query()->updateOrCreate(
+            ['code' => $code],
+            [
+                'category_id' => $category->id,
+                'name' => ['en' => $name, 'ar' => $name],
+                'slug' => ['en' => strtolower($code), 'ar' => strtolower($code)],
+                'is_active' => true,
+                'specifications' => $specifications,
+                'sort_order' => 1,
+            ]
+        );
+    }
+}
+
 beforeEach(function () {
     $this->seed(OrganizationSeeder::class);
     $this->seed(DemoContentSeeder::class);
+    seedPumpSelectorCatalogue();
 
     SiteSetting::query()->updateOrCreate(
         ['organization_id' => Organization::query()->firstOrFail()->id],
@@ -36,8 +72,8 @@ it('lists catalogue pumps that cover the requested flow', function () {
         ->assertDontSee('GRUNDFOS', false)
         ->assertSee('60', false)
         ->assertSee('120', false)
-        ->assertSee(__('site.home_selector_eyebrow'), false)
-        ->assertSee(__('site.home_selector_features')[0], false)
+        ->assertSee('Start a project', false)
+        ->assertSee('Understand the space', false)
         ->assertDontSee('اختيار الطلمبة', false);
 });
 

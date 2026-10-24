@@ -33,32 +33,53 @@ class MenuSeeder extends Seeder
                 'order' => 3,
             ],
             [
-                'key' => 'products',
-                'title' => ['en' => 'Products', 'ar' => 'المنتجات'],
+                'key' => 'projects',
+                'title' => ['en' => 'Projects', 'ar' => 'المشاريع'],
                 'parent_key' => null,
-                'route_name' => MenuRouteNameEnum::PRODUCTS,
+                'route_name' => MenuRouteNameEnum::PROJECTS,
                 'order' => 4,
             ],
             [
-                'key' => 'pump-selector',
-                'title' => ['en' => 'Pump Selector', 'ar' => 'اختيار الطلمبة'],
-                'parent_key' => null,
-                'route_name' => MenuRouteNameEnum::PUMP_SELECTOR,
-                'order' => 5,
+                'key' => 'residential',
+                'title' => ['en' => 'Residential', 'ar' => 'سكني'],
+                'parent_key' => 'projects',
+                'route_name' => MenuRouteNameEnum::PROJECTS,
+                'order' => 1,
+            ],
+            [
+                'key' => 'commercial',
+                'title' => ['en' => 'Commercial', 'ar' => 'تجاري'],
+                'parent_key' => 'projects',
+                'route_name' => MenuRouteNameEnum::PROJECTS,
+                'order' => 2,
+            ],
+            [
+                'key' => 'renovation',
+                'title' => ['en' => 'Renovation', 'ar' => 'تجديد'],
+                'parent_key' => 'projects',
+                'route_name' => MenuRouteNameEnum::PROJECTS,
+                'order' => 3,
+            ],
+            [
+                'key' => 'architecture',
+                'title' => ['en' => 'Architecture', 'ar' => 'معماري'],
+                'parent_key' => 'projects',
+                'route_name' => MenuRouteNameEnum::PROJECTS,
+                'order' => 4,
             ],
             [
                 'key' => 'news',
                 'title' => ['en' => 'News', 'ar' => 'أخبار'],
                 'parent_key' => null,
                 'route_name' => MenuRouteNameEnum::NEWS,
-                'order' => 6,
+                'order' => 5,
             ],
             [
                 'key' => 'contact',
                 'title' => ['en' => 'Contact Us', 'ar' => 'تواصل معنا'],
                 'parent_key' => null,
                 'route_name' => MenuRouteNameEnum::CONTACT_US,
-                'order' => 7,
+                'order' => 6,
             ],
         ];
 
@@ -69,19 +90,21 @@ class MenuSeeder extends Seeder
                 ? ($ids[$item['parent_key']] ?? null)
                 : null;
 
-            $menu = Menu::query()->updateOrCreate(
-                [
-                    'route_name' => $item['route_name']->value,
-                    'parent_id' => $parentId,
-                ],
-                [
-                    'title' => $item['title'],
-                    'order' => $item['order'],
-                    'is_active' => true,
-                    'is_navbar' => true,
-                    'is_footer' => in_array($item['key'], ['about', 'news', 'contact'], true),
-                ],
-            );
+            $menu = Menu::query()
+                ->where('title->en', $item['title']['en'])
+                ->where('parent_id', $parentId)
+                ->first() ?? new Menu;
+
+            $menu->fill([
+                'title' => $item['title'],
+                'parent_id' => $parentId,
+                'route_name' => $item['route_name']->value,
+                'order' => $item['order'],
+                'is_active' => true,
+                'is_navbar' => true,
+                'is_footer' => in_array($item['key'], ['about', 'news', 'contact'], true),
+            ]);
+            $menu->save();
 
             $ids[$item['key']] = $menu->id;
         }

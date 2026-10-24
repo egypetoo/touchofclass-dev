@@ -12,8 +12,8 @@ it('shows every industry card on the industries page without category tabs', fun
     $this->seed(OrganizationSeeder::class);
     $this->seed(DemoContentSeeder::class);
 
-    expect(ProjectCategory::query()->where('is_active', true)->count())->toBe(0)
-        ->and(Project::query()->where('is_active', true)->count())->toBe(5);
+    expect(ProjectCategory::query()->where('is_active', true)->count())->toBe(4)
+        ->and(Project::query()->where('is_active', true)->count())->toBe(10);
 
     $response = $this
         ->withoutMiddleware([
@@ -24,8 +24,24 @@ it('shows every industry card on the industries page without category tabs', fun
         ->get('/projects');
 
     $response->assertOk()
-        ->assertSee('industry-bento-card', false)
-        ->assertDontSee('project-tabs', false)
-        ->assertSeeInOrder(['Food &amp; Beverage', 'Agriculture', 'Industrial', 'E-Commerce', 'Retail &amp; Gifting'], false)
-        ->assertSee('Ventilated packaging for fresh produce.', false);
+        ->assertSee('km-album', false)
+        ->assertSee('data-cat="residential"', false)
+        ->assertDontSee('industry-bento-card', false)
+        ->assertDontSee('/projects/mivida', false)
+        ->assertSee('Mivida', false)
+        ->assertSee('Hayaty Residence', false);
+
+    $commercial = $this
+        ->withoutMiddleware([
+            LocaleSessionRedirect::class,
+            LocaleCookieRedirect::class,
+            LaravelLocalizationRedirectFilter::class,
+        ])
+        ->get('/projects?category=commercial')
+        ->assertOk();
+
+    expect($commercial->getContent())
+        ->toContain('class="km-tab w-100 h-100 active" id="km-tab-commercial"')
+        ->toContain('class="tab-pane fade show active" id="km-pane-commercial"')
+        ->toContain('Restaurant');
 });

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Spatie\Translatable\HasTranslations;
 
 class Menu extends Model
@@ -76,7 +77,17 @@ class Menu extends Model
             return '#';
         }
 
-        return route($name === 'products.index' ? 'categories.index' : $name);
+        $url = route($name === 'products.index' ? 'categories.index' : $name);
+
+        if ($name === 'projects.index' && $this->parent_id) {
+            $slug = Str::slug((string) $this->getTranslation('title', 'en'));
+
+            if ($slug !== '') {
+                return route('projects.index', ['category' => $slug]);
+            }
+        }
+
+        return $url;
     }
 
     public function isCurrent(): bool

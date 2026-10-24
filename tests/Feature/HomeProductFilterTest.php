@@ -1,16 +1,15 @@
 <?php
 
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\Project;
+use App\Models\ProjectCategory;
 use Database\Seeders\OrganizationSeeder;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 use Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 
-function homeFilterCategory(string $slug, ?Category $parent = null, int $order = 0): Category
+function homeProjectCategory(string $slug, int $order = 0): ProjectCategory
 {
-    return Category::query()->create([
-        'parent_id' => $parent?->id,
+    return ProjectCategory::query()->create([
         'name' => ['en' => ucfirst($slug), 'ar' => $slug],
         'slug' => ['en' => $slug, 'ar' => $slug],
         'order' => $order,
@@ -18,15 +17,15 @@ function homeFilterCategory(string $slug, ?Category $parent = null, int $order =
     ]);
 }
 
-function homeFilterProduct(Category $category, string $code, int $sortOrder): Product
+function homeProject(ProjectCategory $category, string $slug, int $order): Project
 {
-    return Product::query()->create([
-        'category_id' => $category->id,
-        'name' => ['en' => "Product {$code}", 'ar' => "منتج {$code}"],
-        'slug' => ['en' => strtolower($code), 'ar' => strtolower($code)],
-        'code' => $code,
-        'sort_order' => $sortOrder,
+    return Project::query()->create([
+        'project_category_id' => $category->id,
+        'title' => ['en' => 'Project '.$slug, 'ar' => 'مشروع '.$slug],
+        'slug' => ['en' => $slug, 'ar' => $slug],
+        'order' => $order,
         'is_active' => true,
+        'show_in_home' => true,
     ]);
 }
 
@@ -47,29 +46,22 @@ beforeEach(function () {
     $this->seed(OrganizationSeeder::class);
 });
 
-it('shows subcategory products inside their root category on the home page', function () {
-    $bar = homeFilterCategory('bar', order: 1);
-    $hall = homeFilterCategory('hall', order: 2);
-    $trays = homeFilterCategory('trays', parent: $hall);
+it('shows each home project inside its project category', function () {
+    $residential = homeProjectCategory('residential', 1);
+    $commercial = homeProjectCategory('commercial', 2);
 
-    foreach (range(1, 8) as $position) {
-        homeFilterProduct($bar, "BAR-{$position}", $position);
-    }
-
-    homeFilterProduct($trays, 'TRAY-1', 99);
+    homeProject($residential, 'sheikh-zayed-villa', 1);
+    homeProject($commercial, 'dallas-villa', 2);
 
     $html = homeFilterPageHtml();
 
-    $hallStart = strpos($html, 'id="km-pane-hall"');
-    $hallEnd = strpos($html, 'tab-pane', $hallStart + 10);
-    $hallPane = substr($html, $hallStart, ($hallEnd === false ? strlen($html) : $hallEnd) - $hallStart);
+    $paneStart = strpos($html, 'id="km-pane-residential"');
+    $paneEnd = strpos($html, 'tab-pane', $paneStart + 10);
+    $residentialPane = substr($html, $paneStart, ($paneEnd === false ? strlen($html) : $paneEnd) - $paneStart);
 
     expect($html)
-        ->toContain('data-cat="hall"')
-        ->toContain('Product TRAY-1')
-        ->and($hallPane)->toContain('tray-1')->not->toContain('Product BAR-1');
-
-    foreach (range(1, 8) as $position) {
-        expect($html)->toContain("Product BAR-{$position}");
-    }
+        ->toContain('data-cat="residential"')
+        ->toContain('Project sheikh-zayed-villa')
+        ->toContain('Project dallas-villa')
+        ->and($residentialPane)->toContain('sheikh-zayed-villa')->not->toContain('dallas-villa');
 });

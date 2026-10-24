@@ -6,6 +6,7 @@ use App\Enums\PageEnum;
 use App\Enums\SectionTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Section;
+use App\Models\Team;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,16 @@ class AboutUsController extends Controller
             'statistics' => $sections->get(SectionTypeEnum::STATISTICS->value, collect())->values(),
             'vision' => $sections->get(SectionTypeEnum::VISION->value)?->first(),
             'mission' => $sections->get(SectionTypeEnum::MISSION->value)?->first(),
+            'founders' => Team::query()
+                ->isActive()
+                ->orderBy('order')
+                ->get()
+                ->map(fn (Team $member): array => [
+                    'name' => (string) $member->name,
+                    'title' => (string) $member->title,
+                    'image' => $member->imageUrl(),
+                ])
+                ->all(),
         ]);
     }
 }

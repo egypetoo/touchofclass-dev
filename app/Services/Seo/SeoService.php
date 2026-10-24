@@ -355,13 +355,13 @@ class SeoService
             $org = $this->siteSetting?->organization;
             $name = trim((string) (
                 $this->lang === 'ar'
-                    ? ($org?->name_ar ?: $org?->name_en)
-                    : ($org?->name_en ?: $org?->name_ar)
+                ? ($org?->name_ar ?: $org?->name_en)
+                : ($org?->name_en ?: $org?->name_ar)
             ));
         }
 
         if ($name === '') {
-            $name = $this->lang === 'ar' ? 'كينج موتورز' : 'King Motors';
+            $name = 'Touch of Class';
         }
 
         return $name;
@@ -393,57 +393,57 @@ class SeoService
     protected function defaultSiteDescription(): string
     {
         return $this->lang === 'ar'
-            ? 'كينج موتورز — مواتير ومضخات ومواسير وكابلات لحلول ضخ المياه المتكاملة.'
-            : 'King Motors — motors, pumps, pipes and cables for integrated water pumping solutions.';
+            ? 'Touch of Class - شركة تصميم داخلي ومعماري للفلل والشقق والمكاتب ومشروعات التجديد.'
+            : 'Touch of Class — an interior and architecture studio for villas, apartments, offices and renovation projects.';
     }
 
     protected function defaultAboutDescription(): string
     {
         return $this->lang === 'ar'
-            ? 'تعرف على كينج موتورز ومعدات ضخ المياه للزراعة والصناعة والمشروعات.'
-            : 'Learn about King Motors and our water pumping equipment.';
+            ? 'تعرف على Touch of Class، شركة تصميم داخلي ومعماري للشقق والفلل والمكاتب ومشروعات التجديد.'
+            : 'Learn about Touch of Class, an interior and architecture studio for apartments, villas, offices and renovation projects.';
     }
 
     protected function defaultContactDescription(): string
     {
         return $this->lang === 'ar'
-            ? 'تواصل مع كينج موتورز لطلب عرض سعر أو اختيار طلمبة أو الدعم الفني.'
-            : 'Contact King Motors for quotations, pump selection and technical support.';
+            ? 'تواصل مع Touch of Class لحجز استشارة تصميم داخلي أو البدء في تجديد مساحتك.'
+            : 'Contact Touch of Class to book an interior design consultation or start renovating your space.';
     }
 
     protected function defaultServicesListDescription(): string
     {
         return $this->lang === 'ar'
-            ? 'استكشف خدمات كينج موتورز: استشارات وقطع غيار وصيانة بالضمان وتوريد وتركيب.'
-            : 'Explore King Motors services: consulting, spare parts, warranty maintenance, and supply and installation.';
+            ? 'خدمات Touch of Class: تصميم داخلي، تصميم معماري، تخطيط عام، تجديد منازل، وإدارة مشاريع.'
+            : 'Touch of Class services: interior design, architectural design, master planning, home renovation and project management.';
     }
 
     protected function defaultProductsListDescription(): string
     {
         return $this->lang === 'ar'
-            ? 'تصفح منتجات كينج موتورز: المواتير والمضخات والمواسير والكابلات.'
-            : 'Browse King Motors products: motors, pumps, pipes and cables.';
+            ? 'تصفح أعمال Touch of Class: فلل وشقق ومكاتب وتجديدات.'
+            : 'Browse Touch of Class spaces: villas, apartments, offices and renovations.';
     }
 
     protected function defaultServiceDescription(string $serviceName): string
     {
         return $this->lang === 'ar'
-            ? "{$serviceName} من كينج موتورز — دعم فني لحلول ضخ المياه."
-            : "{$serviceName} by King Motors — technical support for water pumping solutions.";
+            ? "{$serviceName} من Touch of Class — تصميم داخلي ومعماري."
+            : "{$serviceName} by Touch of Class — interior and architectural design.";
     }
 
     protected function defaultProductDescription(string $productName): string
     {
         return $this->lang === 'ar'
-            ? "{$productName} — متاح لدى كينج موتورز."
-            : "{$productName} — available from King Motors.";
+            ? "{$productName} — من أعمال Touch of Class."
+            : "{$productName} — a Touch of Class project.";
     }
 
     protected function defaultCategoryDescription(string $categoryName): string
     {
         return $this->lang === 'ar'
-            ? "تصفح {$categoryName} — منتجات كينج موتورز."
-            : "Browse {$categoryName} — products from King Motors.";
+            ? "تصفح {$categoryName} — مساحات Touch of Class."
+            : "Browse {$categoryName} — spaces by Touch of Class.";
     }
 
     protected function resolveTwitterHandle(): ?string

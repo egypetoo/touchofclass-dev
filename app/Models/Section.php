@@ -24,6 +24,7 @@ class Section extends Model implements HasMedia
         'type',
         'page',
         'title',
+        'second_title',
         'sub_title',
         'alt_image',
         'text',
@@ -35,6 +36,7 @@ class Section extends Model implements HasMedia
 
     public array $translatable = [
         'title',
+        'second_title',
         'sub_title',
         'text',
         'button_text',

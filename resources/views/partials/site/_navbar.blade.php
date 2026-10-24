@@ -5,7 +5,7 @@
       <!-- Logo (Right in RTL) -->
       <a class="navbar-brand py-0 me-0" href="{{ route('home') }}" aria-label="{{ $siteDisplayName }} - الرئيسية">
         <img
-          src="{{ $siteLogoUrl }}"
+          src="{{ $siteLogoUrl ?? asset('assets/images/logo/logo-clear.png') }}"
           alt="{{ $siteDisplayName }}"
           class="header-logo"
           width="125"
@@ -117,7 +117,7 @@
     >
       <div class="offcanvas-header border-bottom border-light border-opacity-10">
         <a class="navbar-brand" href="{{ route('home') }}" id="mobileMenuLabel">
-          <img src="{{ $siteLogoUrl }}" alt="{{ $siteDisplayName }}" width="104" height="48" loading="lazy"/>
+          <img src="{{ $siteLogoUrl ?? asset('assets/images/logo/logo-clear.png') }}" alt="{{ $siteDisplayName }}" width="104" height="48" loading="lazy"/>
         </a>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="إغلاق"></button>
       </div>
@@ -202,21 +202,21 @@
         <ul class="list-unstyled px-3 py-4 mt-4 rounded-3 list-contact">
           @if ($contactPhones !== [])
             <li class="mb-3 border-bottom pb-3">
-              <strong>الهاتف:</strong>
+              <strong>{{ __('site.phone') }} :</strong>
               @foreach ($contactPhones as $phone)
-                <a href="{{ $phone['tel'] }}" class="d-block text-decoration-none mt-1" dir="ltr">{{ $phone['display'] }}</a>
+                <a href="tel:{{ $phone['tel'] }}" class="d-block text-decoration-none mt-1" dir="ltr">{{ $phone['display'] }}</a>
               @endforeach
             </li>
           @endif
           @if ($contactEmail)
             <li class="mb-3 border-bottom pb-3">
-              <strong>البريد الإلكتروني:</strong>
+              <strong>{{ __('site.email') }} :</strong>
               <a href="mailto:{{ $contactEmail }}" class="d-block text-decoration-none mt-1">{{ $contactEmail }}</a>
             </li>
           @endif
           @if ($contactAddress)
             <li class="d-grid">
-              <strong>العنوان:</strong>
+              <strong>{{ __('site.address') }} :</strong>
               <span class="mt-1">{{ $contactAddress }}</span>
             </li>
           @endif

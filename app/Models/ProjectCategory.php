@@ -18,6 +18,7 @@ class ProjectCategory extends Model
 
     protected $fillable = [
         'name',
+        'short_text',
         'slug',
         'icon',
         'order',
@@ -26,6 +27,7 @@ class ProjectCategory extends Model
 
     public array $translatable = [
         'name',
+        'short_text',
         'slug',
     ];
 

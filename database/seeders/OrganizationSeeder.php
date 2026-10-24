@@ -13,16 +13,16 @@ class OrganizationSeeder extends Seeder
 
         if ($organization) {
             $organization->update([
-                'name_en' => 'King Motors',
-                'name_ar' => 'كينج موتورز',
+                'name_en' => 'Touch of Class',
+                'name_ar' => 'Touch of Class',
             ]);
 
             return;
         }
 
         Organization::query()->create([
-            'name_en' => 'King Motors',
-            'name_ar' => 'كينج موتورز',
+            'name_en' => 'Touch of Class',
+            'name_ar' => 'Touch of Class',
         ]);
     }
 }

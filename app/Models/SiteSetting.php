@@ -83,7 +83,7 @@ class SiteSetting extends Model
     public function logoUrl(): string
     {
         return $this->publicStorageUrl($this->preferredLogoPath())
-            ?? asset('assets/images/logo/logo-transparent.webp');
+            ?? asset('assets/images/logo/logo-clear.png');
     }
 
     public function preferredLogoPath(): ?string

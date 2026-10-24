@@ -50,12 +50,15 @@ class ProjectCategoryResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TranslateContentAction::make(['name']),
+            TranslateContentAction::make(['name', 'short_text']),
             Tabs::make('tabs')->tabs([
                 Tab::make(__('admin_trans.general'))->schema([
                     LocalizedField::make('name', fn (string $name) => TextInput::make($name)
                         ->label(__('admin_trans.name'))
                         ->required()
+                        ->maxLength(255)),
+                    LocalizedField::make('short_text', fn (string $name) => TextInput::make($name)
+                        ->label(__('admin_trans.short_text'))
                         ->maxLength(255)),
                     TextInput::make('icon')
                         ->label(__('admin_trans.icon'))

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -45,6 +46,17 @@ class Branch extends Model implements HasMedia
         'address',
         'working_hours',
     ];
+
+    protected static function booted(): void
+    {
+        $forget = function (): void {
+            Cache::forget('main_branch');
+            Cache::forget('branches');
+        };
+
+        static::saved($forget);
+        static::deleted($forget);
+    }
 
     protected function casts(): array
     {

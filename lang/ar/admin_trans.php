@@ -28,6 +28,7 @@ return [
 
     // Common fields
     'title' => 'العنوان',
+    'second_title' => 'العنوان الثاني',
     'title_en' => 'العنوان بالإنجليزية',
     'title_ar' => 'العنوان بالعربية',
     'sub_title' => 'العنوان الفرعي',

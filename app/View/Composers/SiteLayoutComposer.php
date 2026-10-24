@@ -30,7 +30,7 @@ class SiteLayoutComposer
             'branches' => $this->layoutData->branches(),
             'localeSwitchUrl' => fn (string $locale): string => LocaleUrl::forLocale($locale),
             'switchLocale' => $switchLocale,
-            'siteLogoUrl' => $siteSetting?->logoUrl() ?? asset('assets/images/logo/logo-transparent.webp'),
+            'siteLogoUrl' => $siteSetting?->logoUrl() ?? asset('assets/images/logo/logo-clear.png'),
             'siteDisplayName' => $siteSetting?->siteName() ?? 'King Motors',
             'bookLabel' => $siteSetting?->ctaLabel() ?: __('site.book_now'),
             'primaryPhone' => $siteSetting?->ctaPhoneEntries()[0] ?? null,
@@ -45,6 +45,7 @@ class SiteLayoutComposer
             'productMenu' => $this->layoutData->productMenu(),
             'navbarProductCategories' => $this->layoutData->navbarProductCategories(),
             'cartCount' => $this->cart->count(),
+            'siteFooter' => $this->layoutData->footer($siteSetting, $mainBranch),
         ]);
     }
 }

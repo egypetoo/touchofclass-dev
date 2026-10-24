@@ -81,10 +81,13 @@ class SectionResource extends Resource
                     ->disabled(fn (ManageSections $livewire): bool => filled($livewire->page))
                     ->dehydrated(),
 
-                TranslateContentAction::make(['title', 'sub_title', 'text', 'button_text']),
+                TranslateContentAction::make(['title', 'second_title', 'sub_title', 'text', 'button_text']),
 
                 LocalizedField::make('title', fn (string $name) => TextInput::make($name)
                     ->label(__('admin_trans.title'))
+                    ->default(null)),
+                LocalizedField::make('second_title', fn (string $name) => TextInput::make($name)
+                    ->label(__('admin_trans.second_title'))
                     ->default(null)),
                 LocalizedField::make('sub_title', fn (string $name) => TextInput::make($name)
                     ->label(__('admin_trans.sub_title'))

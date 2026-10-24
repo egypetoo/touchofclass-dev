@@ -19,13 +19,17 @@ use App\Models\Organization;
 use App\Models\Partner;
 use App\Models\Product;
 use App\Models\Project;
+use App\Models\ProjectCategory;
 use App\Models\Redirect;
 use App\Models\Section;
 use App\Models\Service;
 use App\Models\SiteSetting;
 use App\Models\SiteSocialLink;
+use App\Models\Team;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use SplFileInfo;
 
@@ -37,16 +41,17 @@ class DemoContentSeeder extends Seeder
 
         if ($organization) {
             $organization->update([
-                'name_en' => 'King Motors',
-                'name_ar' => 'كينج موتورز',
+                'name_en' => 'Touch of Class',
+                'name_ar' => 'Touch of Class',
             ]);
         } else {
             $organization = Organization::query()->create([
-                'name_en' => 'King Motors',
-                'name_ar' => 'كينج موتورز',
+                'name_en' => 'Touch of Class',
+                'name_ar' => 'Touch of Class',
             ]);
         }
 
+        $this->call(MenuSeeder::class);
         $this->seedSiteSettings($organization);
         $this->seedMailSettings();
         $categories = $this->syncCategories($organization);
@@ -56,14 +61,29 @@ class DemoContentSeeder extends Seeder
         $services = $this->syncServices($organization);
         $this->syncBlogs($organization);
         $this->retireOldDesignContent($organization);
+        $this->syncHomeProjects();
         $this->syncHomePartners($organization);
         $this->syncSections($organization);
         $this->syncBranches($organization);
+        $this->syncFounders();
         $this->seedFaqs();
         $this->seedRedirects();
         $this->seedInbox($organization, $services);
+        $this->ensurePublicStorageLink();
+        Cache::flush();
 
-        $this->command?->info('King Motors demo content refreshed.');
+        $this->command?->info('Touch of Class demo content refreshed.');
+    }
+
+    protected function ensurePublicStorageLink(): void
+    {
+        $link = public_path('storage');
+
+        if (is_link($link) || file_exists($link)) {
+            return;
+        }
+
+        Artisan::call('storage:link');
     }
 
     protected function seedSiteSettings(Organization $organization): void
@@ -77,36 +97,33 @@ class DemoContentSeeder extends Seeder
         unset($extra['fax']);
 
         $site->update([
-            'site_name_en' => 'King Motors',
-            'site_name_ar' => 'كينج موتورز',
+            'site_name_en' => 'Touch of Class',
+            'site_name_ar' => 'Touch of Class',
             'default_locale' => 'ar',
             'cta_phone' => [
-                ['code' => '20', 'number' => '1001234567'],
-                ['code' => '20', 'number' => '1007654321'],
+                ['code' => '20', 'number' => '1112302002'],
             ],
             'cta_whatsapp' => [
-                ['code' => '20', 'number' => '1001234567'],
+                ['code' => '20', 'number' => '1112302002'],
             ],
             'cta_label_en' => 'Contact Us',
             'cta_label_ar' => 'تواصل معنا',
-            'support_email' => 'info@kingmotors.com',
-            'notification_emails' => 'info@kingmotors.com',
-            'footer_copyright_en' => '© '.date('Y').' King Motors. All rights reserved.',
-            'footer_copyright_ar' => '© '.date('Y').' King Motors. جميع الحقوق محفوظة.',
-            'footer_body_en' => 'Motors, pumps, pipes and cables for integrated water pumping solutions.',
-            'footer_body_ar' => 'نوفر مجموعة متكاملة من الطلمبات والمواتير وحلول نقل المياه لمختلف القطاعات الصناعية والزراعية والتجارية.',
+            'support_email' => 'info@touchofclass.com',
+            'notification_emails' => 'info@touchofclass.com',
+            'footer_copyright_en' => '© '.date('Y').' Touch of Class. All rights reserved.',
+            'footer_copyright_ar' => '© '.date('Y').' Touch of Class. جميع الحقوق محفوظة.',
+            'footer_body_en' => 'An interior and architecture studio. We design spaces and manage their delivery from the idea to handover.',
+            'footer_body_ar' => 'شركة تصميم داخلي ومعماري. نصمم المساحات وندير تنفيذها من الفكرة حتى التسليم.',
             'extra' => $extra,
             'coming_soon_enabled' => false,
             'coming_soon_title_en' => 'Coming Soon',
             'coming_soon_title_ar' => 'قريباً',
-            'coming_soon_message_en' => 'We are preparing the King Motors website.',
-            'coming_soon_message_ar' => 'نجهّز موقع كينج موتورز.',
+            'coming_soon_message_en' => 'We are preparing the Touch of Class website.',
+            'coming_soon_message_ar' => 'نجهّز موقع Touch of Class.',
         ]);
 
         $links = [
-            [SocialLinkPlatform::Facebook, '#', 1],
-            [SocialLinkPlatform::LinkedIn, '#', 2],
-            [SocialLinkPlatform::Youtube, '#', 3],
+            [SocialLinkPlatform::Instagram, 'https://www.instagram.com/touchofclass_interiors/', 1],
         ];
 
         $keptPlatforms = [];
@@ -138,7 +155,7 @@ class DemoContentSeeder extends Seeder
         MailSetting::query()->update(['is_active' => false]);
 
         MailSetting::query()->updateOrCreate(
-            ['from_address' => 'info@kingmotors.com'],
+            ['from_address' => 'info@touchofclass.com'],
             [
                 'is_active' => false,
                 'mailer' => 'log',
@@ -147,7 +164,7 @@ class DemoContentSeeder extends Seeder
                 'username' => null,
                 'password' => null,
                 'encryption' => 'tls',
-                'from_name' => 'King Motors',
+                'from_name' => 'Touch of Class',
             ]
         );
     }
@@ -158,59 +175,41 @@ class DemoContentSeeder extends Seeder
     protected function syncCategories(Organization $organization): array
     {
         $tree = [
-            'deep-well-pumps' => [
+            'residential' => [
                 'parent' => null,
-                'name' => ['en' => 'Deep Well Pumps', 'ar' => 'طلمبات اعماق'],
+                'name' => ['en' => 'Residential', 'ar' => 'سكني'],
                 'short_text' => [
-                    'en' => 'Deep well pump brands: IMPT, VAN SAN, GOLD, Poldap, SP, TESLA and KPS.',
-                    'ar' => 'براندات طلمبات الأعماق: IMPT و VAN SAN و GOLD و Poldap و SP و TESLA و KPS.',
+                    'en' => 'Villas and apartments designed for daily comfort and clear details.',
+                    'ar' => 'فلل وشقق مصممة براحة وتفاصيل يومية واضحة.',
                 ],
-                'image' => 'products/pump-submersible.webp',
+                'image' => 'studio/zayed-villa.jpg',
             ],
-            'deep-well-motors' => [
+            'commercial' => [
                 'parent' => null,
-                'name' => ['en' => 'Deep Well Motors', 'ar' => 'مواتير اعماق'],
+                'name' => ['en' => 'Commercial', 'ar' => 'تجاري'],
                 'short_text' => [
-                    'en' => 'Deep well motor brands: SP, POLDAP, KPS, Van San, IPMT and Gold.',
-                    'ar' => 'براندات مواتير الأعماق: SP و POLDAP و KPS و Van San و IPMT و Gold.',
+                    'en' => 'Offices and workspaces that reflect the identity of the place.',
+                    'ar' => 'مكاتب ومساحات عمل تعكس هوية المكان.',
                 ],
-                'image' => 'products/motor-ie3.webp',
+                'image' => 'studio/offices.jpg',
             ],
-            'deep-well-pipes' => [
+            'renovation' => [
                 'parent' => null,
-                'name' => ['en' => 'Deep Well Pipes', 'ar' => 'مواسير اعماق'],
+                'name' => ['en' => 'Renovation', 'ar' => 'تجديد'],
                 'short_text' => [
-                    'en' => 'Deep well pipe brands: Bore Power, Pure Life, Ashirvad and Pure Pipe.',
-                    'ar' => 'براندات مواسير الأعماق: Bore Power و Pure Life و Ashirvad و Pure Pipe.',
+                    'en' => 'A renovation that keeps the spirit of the place and updates how it is used.',
+                    'ar' => 'تجديد يحافظ على روح المكان ويحدّث استخدامه.',
                 ],
-                'image' => 'products/pipe-hdpe.webp',
+                'image' => 'studio/renovation.jpg',
             ],
-            'submersible-cables' => [
+            'architecture' => [
                 'parent' => null,
-                'name' => ['en' => 'Submersible Cables', 'ar' => 'كابلات بحارى'],
+                'name' => ['en' => 'Architecture', 'ar' => 'معماري'],
                 'short_text' => [
-                    'en' => 'Submersible cable brands: Carkit, Axelon and SEVAL.',
-                    'ar' => 'براندات الكابلات البحاري: Carkit و Axelon و SEVAL.',
+                    'en' => 'Architecture and planning that connect the building to its site.',
+                    'ar' => 'تصميم معماري وتخطيط يربط المبنى بموقعه.',
                 ],
-                'image' => 'products/cable-submersible.webp',
-            ],
-            'electrical-panels' => [
-                'parent' => null,
-                'name' => ['en' => 'Electrical Panels', 'ar' => 'لوحات كهربائية'],
-                'short_text' => [
-                    'en' => 'Delixi inverter panels.',
-                    'ar' => 'لوحات انفرتر Delixi.',
-                ],
-                'image' => 'products/cable-power.webp',
-            ],
-            'inverter-panels' => [
-                'parent' => 'electrical-panels',
-                'name' => ['en' => 'Inverter Panels', 'ar' => 'لوحات انفرتر'],
-                'short_text' => [
-                    'en' => 'Delixi inverter panels.',
-                    'ar' => 'لوحات انفرتر Delixi.',
-                ],
-                'image' => 'products/cable-power.webp',
+                'image' => 'studio/architecture.jpg',
             ],
         ];
 
@@ -261,24 +260,25 @@ class DemoContentSeeder extends Seeder
     protected function syncProducts(array $categories): void
     {
         $products = [
-            ['van-san-deep-well-pump', 'KM-P-VANSAN', 'deep-well-pumps', 'VAN SAN', 'VAN SAN', 'Deep well pump', 'طلمبة اعماق', 'products/brands/km-p-vansan.jpg'],
-            ['gold-deep-well-pump', 'KM-P-GOLD', 'deep-well-pumps', 'GOLD', 'GOLD', 'Deep well pump', 'طلمبة اعماق', 'products/brands/km-p-gold.jpg'],
-            ['sp-deep-well-pump', 'KM-P-SP', 'deep-well-pumps', 'SP', 'SP', 'Deep well pump', 'طلمبة اعماق', 'products/brands/km-p-sp.jpg'],
-            ['tesla-deep-well-pump', 'KM-P-TESLA', 'deep-well-pumps', 'TESLA', 'TESLA', 'Deep well pump', 'طلمبة اعماق', 'products/brands/km-p-tesla.jpg'],
-            ['kps-deep-well-pump', 'KM-P-KPS', 'deep-well-pumps', 'KPS', 'KPS', 'Deep well pump', 'طلمبة اعماق', 'products/brands/km-p-kps.jpg'],
-            ['sp-deep-well-motor', 'KM-M-SP', 'deep-well-motors', 'SP', 'SP', 'Deep well motor', 'موتور اعماق', 'products/brands/km-m-sp.jpg'],
-            ['poldap-deep-well-motor', 'KM-M-POLDAP', 'deep-well-motors', 'POLDAP', 'POLDAP', 'Deep well motor', 'موتور اعماق', 'products/brands/km-m-poldap.jpg'],
-            ['kps-deep-well-motor', 'KM-M-KPS', 'deep-well-motors', 'KPS', 'KPS', 'Deep well motor', 'موتور اعماق', 'products/brands/km-m-kps.jpg'],
-            ['van-san-deep-well-motor', 'KM-M-VANSAN', 'deep-well-motors', 'Van San', 'Van San', 'Deep well motor', 'موتور اعماق', 'products/brands/km-m-vansan.jpg'],
-            ['ipmt-deep-well-motor', 'KM-M-IPMT', 'deep-well-motors', 'IPMT', 'IPMT', 'Deep well motor', 'موتور اعماق', 'products/brands/km-m-ipmt.jpg'],
-            ['bore-power-pipe', 'KM-PIPE-BORE', 'deep-well-pipes', 'Bore Power', 'Bore Power', 'Deep well pipe', 'ماسورة اعماق', 'products/brands/km-pipe-bore.jpg'],
-            ['pure-life-pipe', 'KM-PIPE-PURELIFE', 'deep-well-pipes', 'Pure Life', 'Pure Life', 'Deep well pipe', 'ماسورة اعماق', 'products/brands/km-pipe-purelife.jpg'],
-            ['ashirvad-pipe', 'KM-PIPE-ASHIRVAD', 'deep-well-pipes', 'Ashirvad', 'Ashirvad', 'Deep well pipe', 'ماسورة اعماق', 'products/brands/km-pipe-ashirvad.jpg'],
-            ['pure-pipe', 'KM-PIPE-PURE', 'deep-well-pipes', 'Pure Pipe', 'Pure Pipe', 'Deep well pipe', 'ماسورة اعماق', 'products/brands/km-pipe-pure.jpg'],
-            ['carkit-cable', 'KM-C-CARKIT', 'submersible-cables', 'Carkit', 'Carkit', 'Submersible cable', 'كابل بحارى', 'products/brands/km-c-carkit.jpg'],
-            ['axelon-cable', 'KM-C-AXELON', 'submersible-cables', 'Axelon', 'Axelon', 'Submersible cable', 'كابل بحارى', 'products/brands/km-c-axelon.jpg'],
-            ['seval-cable', 'KM-C-SEVAL', 'submersible-cables', 'SEVAL', 'SEVAL', 'Submersible cable', 'كابل بحارى', 'products/brands/km-c-seval.jpg'],
-            ['delixi-inverter-panel', 'KM-INV-DELIXI', 'inverter-panels', 'Delixi', 'Delixi', 'Inverter panel', 'لوحة انفرتر', 'products/brands/km-inv-delixi.jpg'],
+            ['sheikh-zayed-villa', 'TOC-RES-01', 'residential', 'Sheikh Zayed Villa', 'فيلا الشيخ زايد', 'A villa designed with daily comfort and clear details.', 'فيلا مصممة براحة وتفاصيل يومية واضحة.', 'studio/zayed-villa.jpg'],
+            ['contemporary-loft', 'TOC-RES-02', 'residential', 'Contemporary Loft', 'لوفت معاصر', 'A contemporary loft with a calm, lived-in finish.', 'لوفت معاصر بتشطيب هادئ ومريح.', 'studio/the-loft.jpg'],
+            ['penthouse', 'TOC-RES-03', 'residential', 'Penthouse', 'بنتهاوس', 'A penthouse planned around light, views and quiet rooms.', 'بنتهاوس مُخطط حول الإضاءة والإطلالة والغرف الهادئة.', 'studio/penthouse.jpg'],
+            ['capital-office', 'TOC-RES-04', 'residential', 'Capital Office', 'مكتب العاصمة', 'A residential workspace with a clear daily layout.', 'مساحة عمل سكنية بتوزيع يومي واضح.', 'studio/offices.jpg'],
+            ['east-residence', 'TOC-RES-05', 'residential', 'East Residence', 'إقامة شرقية', 'An eastern residence with warm materials and private corners.', 'إقامة شرقية بخامات دافئة وزوايا خاصة.', 'studio/east-residence.jpg'],
+            ['lake-house', 'TOC-RES-06', 'residential', 'Lake House', 'بيت البحيرة', 'A lake house shaped around rest and open living.', 'بيت بحيرة مُصمم للراحة والمعيشة المفتوحة.', 'studio/lake-house.jpg'],
+            ['home-renovation-project', 'TOC-COM-01', 'commercial', 'Home Renovation', 'تجديد منزل', 'A commercial-facing renovation that updates how the space is used.', 'تجديد يحدّث استخدام المساحة ويحافظ على طابعها.', 'studio/renovation.jpg'],
+            ['dallas-villa', 'TOC-COM-02', 'commercial', 'Dallas Villa', 'فيلا دالاس', 'A villa interior with a composed, formal character.', 'تصميم فيلا بطابع هادئ ورسمي.', 'studio/dallas.jpg'],
+            ['residential-towers', 'TOC-COM-03', 'commercial', 'Residential Towers', 'أبراج سكنية', 'Shared residential towers with a clear public identity.', 'أبراج سكنية بهوية واضحة للمساحات المشتركة.', 'studio/towers.jpg'],
+            ['quiet-elegance', 'TOC-COM-04', 'commercial', 'Quiet Elegance', 'أناقة هادئة', 'A quiet commercial interior built on restrained materials.', 'مساحة تجارية هادئة بخامات موزونة.', 'studio/elegance.jpg'],
+            ['city-life', 'TOC-COM-05', 'commercial', 'City Life', 'حياة المدينة', 'An urban interior that reflects the rhythm of the city.', 'تصميم حضري يعكس إيقاع المدينة.', 'studio/urban.jpg'],
+            ['residential-suite', 'TOC-REN-01', 'renovation', 'Residential Suite', 'جناح سكني', 'A renovated suite that keeps the character of the building.', 'جناح سكني مُجدد يحافظ على طابع المبنى.', 'studio/brooklyn.jpg'],
+            ['contemporary-office', 'TOC-REN-02', 'renovation', 'Contemporary Office', 'مكتب معاصر', 'A renovated office with a contemporary plan.', 'مكتب مُجدد بمخطط معاصر.', 'studio/architecture.jpg'],
+            ['custom-details', 'TOC-REN-03', 'renovation', 'Custom Details', 'تفاصيل مخصصة', 'A renovation led by custom details and finishes.', 'تجديد قائم على تفاصيل وتشطيبات مخصصة.', 'studio/prestigious.jpg'],
+            ['brooklyn-suite', 'TOC-REN-04', 'renovation', 'Brooklyn Suite', 'جناح بروكلين', 'A suite renovation with a calm, layered interior.', 'تجديد جناح بطبقات هادئة ومدروسة.', 'studio/brooklyn.jpg'],
+            ['full-fit-out', 'TOC-ARC-01', 'architecture', 'Full Fit-Out', 'تشطيب متكامل', 'A complete fit-out from the plan to the finished space.', 'تشطيب متكامل من المخطط حتى المساحة الجاهزة.', 'studio/photo-1.jpg'],
+            ['interior-design-project', 'TOC-ARC-02', 'architecture', 'Interior Design', 'تصميم داخلي', 'An interior planned with the architecture of the building.', 'تصميم داخلي مرتبط بعمارة المبنى.', 'studio/zayed-villa.jpg'],
+            ['architectural-planning', 'TOC-ARC-03', 'architecture', 'Architectural Planning', 'تخطيط معماري', 'Planning that connects the building to its site.', 'تخطيط معماري يربط المبنى بموقعه.', 'studio/the-loft.jpg'],
+            ['execution-management', 'TOC-ARC-04', 'architecture', 'Execution Management', 'إدارة تنفيذ', 'Project delivery managed from drawing to handover.', 'إدارة تنفيذ من الرسمة حتى التسليم.', 'studio/penthouse.jpg'],
         ];
 
         $keptIds = [];
@@ -323,10 +323,11 @@ class DemoContentSeeder extends Seeder
     protected function syncServices(Organization $organization): array
     {
         $items = [
-            ['technical-consulting', 'Technical Consulting', 'استشارات', 'Technical advice to choose the right pumping equipment.', 'نقدم استشارات فنية لمساعدتك في اختيار الحل والمعدات الأنسب وفقاً لاحتياجات مشروعك.', 'services/service-consulting.webp'],
-            ['spare-parts', 'Spare Parts', 'قطع غيار', 'Reliable spare parts for pumping systems.', 'نوفر قطع غيار موثوقة لمختلف أنظمة الضخ والمعدات لضمان الأداء والاستمرارية.', 'services/service-spareparts.webp'],
-            ['warranty-maintenance', 'Warranty Maintenance', 'صيانة بالضمان', 'Specialized maintenance and technical support.', 'خدمات صيانة متخصصة ودعم فني موثوق للحفاظ على كفاءة المعدات واستمرارية التشغيل.', 'services/service-maintenance.webp'],
-            ['supply-and-installation', 'Supply and Installation', 'توريد وتركيب', 'Supply and installation of pumping systems.', 'نوفر حلول متكاملة لتوريد وتركيب أنظمة الضخ والمعدات، بما يضمن التشغيل بكفاءة واعتمادية عالية.', 'services/service-supply.webp'],
+            ['interior-design', 'Interior Design', 'التصميم الداخلي', 'Elegant, practical spaces that balance beauty and comfort, designed around how you live.', 'مساحات أنيقة وعملية بتوازن بين الجمال والراحة، ومصممة على أسلوب حياتك.', 'studio/service-interior.jpg'],
+            ['architectural-design', 'Architectural Design', 'التصميم المعماري', 'Architectural solutions that combine creativity, function and sustainability, tailored to the site.', 'حلول معمارية تجمع الإبداع والوظيفة والاستدامة، ومفصّلة على رؤيتك وطبيعة الموقع.', 'studio/service-architecture.jpg'],
+            ['home-renovation', 'Home Renovation', 'تجديد المنازل', 'We turn existing spaces into contemporary places while respecting the character of the building.', 'نحوّل المساحات القائمة لبيئات حديثة، مع احترام طابع المبنى وإعادة الحياة لكل تفصيلة.', 'studio/service-renovation.jpg'],
+            ['project-management', 'Project Management', 'إدارة المشاريع', 'Full project management from start to finish, focused on quality, time and cost.', 'إدارة كاملة للمشروع من البداية للنهاية، بتركيز على الجودة والوقت والتكلفة.', 'studio/service-management.jpg'],
+            ['master-planning', 'Master Planning', 'التخطيط العام', 'Planning for larger projects that considers the site and long-term use before the detail of each building.', 'تخطيط للمشروعات الأكبر يراعي الموقع والاستخدام طويل المدى، قبل الدخول في تفاصيل كل مبنى.', 'studio/service-masterplan.jpg'],
         ];
 
         $services = [];
@@ -377,13 +378,10 @@ class DemoContentSeeder extends Seeder
         $this->lockSlug($category, 'articles');
 
         $posts = [
-            ['pump-selection-guide', 'A complete guide to choosing the right pump', 'دليل شامل لاختيار الطلمبة المناسبة لمشروعك', 'The factors that matter when selecting a pump.', 'تعرف على أهم العوامل التي يجب مراعاتها عند اختيار الطلمبة المناسبة.', 'articles/article-featured.webp', '2025-09-15'],
-            ['pump-types', 'Main pump types and their uses', 'أهم أنواع الطلمبات واستخداماتها', 'Industrial, agricultural and domestic pump types.', 'استعرض أشهر أنواع الطلمبات الصناعية والزراعية والمنزلية.', 'articles/article-types.webp', '2025-08-10'],
-            ['pump-efficiency', 'Tips to improve pump efficiency', 'نصائح لزيادة كفاءة الطلمبات', 'How to keep pumps efficient for longer.', 'تعرف على أهم النصائح للحفاظ على كفاءة الطلمبات.', 'articles/article-efficiency.webp', '2025-08-28'],
-            ['industrial-pumping-systems', 'Water pumping systems in industrial plants', 'أنظمة ضخ المياه في المنشآت الصناعية', 'How industrial pumping systems are planned.', 'كيف يتم تخطيط أنظمة الضخ في المنشآت الصناعية.', 'articles/article-systems.webp', '2025-07-20'],
-            ['submersible-maintenance-schedule', 'Submersible pump maintenance schedule', 'جدول الصيانة الدورية للطلمبات الغاطسة', 'A practical maintenance schedule for submersible pumps.', 'جدول عملي للصيانة الدورية للطلمبات الغاطسة.', 'articles/article-efficiency.webp', '2025-07-02'],
-            ['october-branch', 'King Motors opens its new 6th of October branch', 'كينج موتورز تفتتح فرعها الجديد في 6 أكتوبر', 'The new branch serves Giza and nearby industrial zones.', 'الفرع الجديد يخدم الجيزة والمناطق الصناعية القريبة.', 'articles/article-featured.webp', '2025-06-18'],
-            ['ie2-vs-ie3', 'IE2 vs IE3 motors and which saves more', 'الفرق بين مواتير IE2 و IE3 وأيهما أوفر', 'How efficiency classes affect running cost.', 'كيف تؤثر فئة الكفاءة على تكلفة التشغيل.', 'articles/article-types.webp', '2025-06-01'],
+            ['design-style-guide', 'A guide to choosing the right design style for your home', 'دليل اختيار أسلوب التصميم المناسب لبيتك', 'Lighting, materials and the layout of rooms: the decisions that matter before design starts.', 'إضاءة وخامات وتوزيع فراغات: أهم القرارات قبل أن تبدأ التصميم.', 'studio/photo-1.jpg', '2025-09-15'],
+            ['interior-design-types', 'Interior design styles and where to use them', 'أنواع التصميم الداخلي وأين تستخدم', 'From classic to contemporary: how the styles differ and when each one suits the space.', 'من الكلاسيكي إلى الحديث: الفرق بين الأساليب ومتى يناسب كل منها المساحة.', 'studio/photo-2.jpg', '2025-08-10'],
+            ['warmer-lighting', 'Tips for warmer, more comfortable lighting', 'نصائح لإضاءة أدفأ وأكثر راحة', 'How to place light so a space feels wider and calmer without extra cost.', 'كيفية توزيع الإضاءة لتبدو المساحة أوسع وأهدأ من دون تكلفة إضافية.', 'studio/photo-3.jpg', '2025-08-28'],
+            ['open-office-planning', 'Planning open offices', 'تخطيط المكاتب المفتوحة', 'How to divide a workplace between focus and meetings without crowding the room.', 'كيفية تقسيم مساحة العمل بين التركيز والاجتماعات من دون ازدحام المكان.', 'studio/photo-4.jpg', '2025-09-02'],
         ];
 
         $keptIds = [$category->id];
@@ -430,12 +428,175 @@ class DemoContentSeeder extends Seeder
             ->where('organization_id', $organization->id)
             ->update(['is_active' => false, 'show_in_home' => false]);
 
-        Project::query()->update(['is_active' => false, 'show_in_home' => false]);
+    }
+
+    protected function syncHomeProjects(): void
+    {
+        $categories = [
+            'residential' => ['Residential', 'سكني', 'fa-solid fa-house', 'Villas and apartments designed for daily comfort and clear details.', 'فلل وشقق مصممة براحة وتفاصيل يومية واضحة.'],
+            'commercial' => ['Commercial', 'تجاري', 'fa-solid fa-store', 'Offices and workspaces that reflect the identity of the place.', 'مكاتب ومساحات عمل تعكس هوية المكان.'],
+            'renovation' => ['Renovation', 'تجديد', 'fa-solid fa-grip-lines-vertical', 'A renovation that keeps the spirit of the place and updates how it is used.', 'تجديد يحافظ على روح المكان ويحدّث استخدامه.'],
+            'architecture' => ['Architecture', 'معماري', 'fa-solid fa-plug-circle-bolt', 'Architecture and planning that connect the building to its site.', 'تصميم معماري وتخطيط يربط المبنى بموقعه.'],
+        ];
+
+        $categoryModels = [];
+        $order = 1;
+
+        foreach ($categories as $slug => [$nameEn, $nameAr, $icon, $shortEn, $shortAr]) {
+            $category = ProjectCategory::query()->where('slug->en', $slug)->first() ?? new ProjectCategory;
+            $category->fill([
+                'name' => ['en' => $nameEn, 'ar' => $nameAr],
+                'short_text' => ['en' => $shortEn, 'ar' => $shortAr],
+                'icon' => $icon,
+                'order' => $order,
+                'is_active' => true,
+            ]);
+            $category->save();
+            $this->lockSlug($category, $slug);
+            $categoryModels[$slug] = $category;
+            $order++;
+        }
+
+        $projects = [
+            [
+                'slug' => 'mivida',
+                'category' => 'residential',
+                'title' => ['en' => 'Mivida', 'ar' => 'ميفيدا'],
+                'location' => ['en' => 'Mivida', 'ar' => 'ميفيدا'],
+                'short' => [
+                    'en' => 'A sophisticated approach to interior design shapes every corner of the Mivida project with elegance and warmth.',
+                    'ar' => 'تصميم داخلي متقن يرسم كل ركن في مشروع ميفيدا بأناقة ودفء.',
+                ],
+                'text' => [
+                    'en' => '<p>A sophisticated approach to interior design shapes every corner of the Mivida project with elegance and warmth. The design celebrates a balance between aesthetics and practicality, offering a space that feels luxurious yet deeply personal.</p><p>The space embraces different shades of grey to create a calm, contemporary atmosphere. Clean lines and balanced textures highlight the beauty of simplicity.</p>',
+                    'ar' => '<p>تصميم داخلي متقن يرسم كل ركن في مشروع ميفيدا بأناقة ودفء. التصميم يوازن بين الجمال والعملية، ويقدم مساحة فخمة وقريبة من ساكنها.</p><p>المساحة تعتمد درجات الرمادي لجو هادئ ومعاصر. الخطوط النظيفة والخامات المتوازنة تبرز جمال البساطة.</p>',
+                ],
+            ],
+            [
+                'slug' => 'hayaty-residence',
+                'category' => 'residential',
+                'title' => ['en' => 'Hayaty Residence', 'ar' => 'حياة ريزيدنس'],
+                'location' => ['en' => 'Hayaty Residence', 'ar' => 'حياة ريزيدنس'],
+                'short' => [
+                    'en' => 'This residence is a testament to livable elegance, where every design decision reflects a careful blend of style and functionality.',
+                    'ar' => 'السكن ده مثال على أناقة تعيشها كل يوم، وكل قرار تصميمي فيه مزيج مدروس من الأسلوب والوظيفة.',
+                ],
+                'text' => [
+                    'en' => '<p>This residence is a testament to livable elegance, where every design decision reflects a careful blend of style and functionality.</p><p>By prioritizing comfort and aesthetics, the interiors create an inviting atmosphere that elevates everyday living to an art form.</p>',
+                    'ar' => '<p>السكن ده مثال على أناقة تعيشها كل يوم، وكل قرار تصميمي فيه مزيج مدروس من الأسلوب والوظيفة.</p><p>الاهتمام بالراحة والجمال يخلق جو يدعو للسكن ويرفع تفاصيل الحياة اليومية.</p>',
+                ],
+            ],
+            [
+                'slug' => 'lotus-roof',
+                'category' => 'residential',
+                'title' => ['en' => 'Lotus Roof', 'ar' => 'لوتس روف'],
+                'location' => ['en' => 'Lotus Roof', 'ar' => 'لوتس روف'],
+                'short' => ['en' => 'Lotus Roof project.', 'ar' => 'مشروع لوتس روف.'],
+                'text' => ['en' => '<p>Lotus Roof project.</p>', 'ar' => '<p>مشروع لوتس روف.</p>'],
+            ],
+            [
+                'slug' => 'tala-compound',
+                'category' => 'residential',
+                'title' => ['en' => 'Tala Compound', 'ar' => 'كمبوند تالا'],
+                'location' => ['en' => 'Tala Compound', 'ar' => 'كمبوند تالا'],
+                'short' => [
+                    'en' => 'Elegance in its purest form, where a serene palette of nude tones meets refined simplicity.',
+                    'ar' => 'أناقة في أنقى صورة، بدرجات هادية وبساطة مدروسة.',
+                ],
+                'text' => [
+                    'en' => '<p>Elegance in its purest form, where a serene palette of nude tones meets refined simplicity. Every detail is thoughtfully curated, proving that true luxury lies in subtlety and sophistication.</p>',
+                    'ar' => '<p>أناقة في أنقى صورة، بدرجات هادية وبساطة مدروسة. كل تفصيلة مختارة بعناية، والفخامة هنا في الهدوء والرقي.</p>',
+                ],
+            ],
+            [
+                'slug' => 'mountain-view',
+                'category' => 'residential',
+                'title' => ['en' => 'Mountain View', 'ar' => 'ماونتن فيو'],
+                'location' => ['en' => 'Mountain View', 'ar' => 'ماونتن فيو'],
+                'short' => ['en' => 'Warmth meets serenity.', 'ar' => 'دفء يلتقي بالهدوء.'],
+                'text' => ['en' => '<p>Warmth meets serenity.</p>', 'ar' => '<p>دفء يلتقي بالهدوء.</p>'],
+            ],
+            [
+                'slug' => 'sodic',
+                'category' => 'residential',
+                'title' => ['en' => 'Sodic', 'ar' => 'سوديك'],
+                'location' => ['en' => 'Sodic', 'ar' => 'سوديك'],
+                'short' => ['en' => 'Sodic project.', 'ar' => 'مشروع سوديك.'],
+                'text' => ['en' => '<p>Sodic project.</p>', 'ar' => '<p>مشروع سوديك.</p>'],
+            ],
+            [
+                'slug' => 'ashgar-october',
+                'category' => 'residential',
+                'title' => ['en' => 'Ashgar Compound', 'ar' => 'كمبوند أشجار'],
+                'location' => ['en' => 'October', 'ar' => 'أكتوبر'],
+                'short' => ['en' => 'Ashgar Compound, October.', 'ar' => 'كمبوند أشجار، أكتوبر.'],
+                'text' => ['en' => '<p>Ashgar Compound, October.</p>', 'ar' => '<p>كمبوند أشجار، أكتوبر.</p>'],
+            ],
+            [
+                'slug' => 'mountain-view-sahel',
+                'category' => 'residential',
+                'title' => ['en' => 'Mountain View Sahel', 'ar' => 'ماونتن فيو الساحل'],
+                'location' => ['en' => 'Sahel', 'ar' => 'الساحل'],
+                'short' => ['en' => 'Mountain View, Sahel.', 'ar' => 'ماونتن فيو، الساحل.'],
+                'text' => ['en' => '<p>Mountain View, Sahel.</p>', 'ar' => '<p>ماونتن فيو، الساحل.</p>'],
+            ],
+            [
+                'slug' => 'qatar-villas',
+                'category' => 'residential',
+                'title' => ['en' => 'Qatar Villas', 'ar' => 'فلل قطر'],
+                'location' => ['en' => 'Qatar', 'ar' => 'قطر'],
+                'short' => [
+                    'en' => 'Timeless luxury across multiple projects in Qatar.',
+                    'ar' => 'فخامة خالدة في مشاريع متعددة في قطر.',
+                ],
+                'text' => [
+                    'en' => '<p>Timeless luxury across multiple projects in Qatar.</p>',
+                    'ar' => '<p>فخامة خالدة في مشاريع متعددة في قطر.</p>',
+                ],
+            ],
+            [
+                'slug' => 'restaurant',
+                'category' => 'commercial',
+                'title' => ['en' => 'Restaurant', 'ar' => 'مطعم'],
+                'location' => ['en' => 'Restaurant', 'ar' => 'مطعم'],
+                'short' => ['en' => 'Commercial project / Restaurant.', 'ar' => 'مشروع تجاري / مطعم.'],
+                'text' => ['en' => '<p>Commercial project / Restaurant.</p>', 'ar' => '<p>مشروع تجاري / مطعم.</p>'],
+            ],
+        ];
+
+        $keptIds = [];
+
+        foreach ($projects as $index => $item) {
+            $project = Project::query()->where('slug->en', $item['slug'])->first() ?? new Project;
+            $project->fill([
+                'project_category_id' => $categoryModels[$item['category']]->id,
+                'title' => $item['title'],
+                'location' => $item['location'],
+                'short_text' => $item['short'],
+                'text' => $item['text'],
+                'is_active' => true,
+                'show_in_home' => true,
+                'order' => $index + 1,
+            ]);
+            $project->save();
+            $this->lockSlug($project, $item['slug']);
+
+            $images = $this->portfolioImages($item['slug']);
+            if ($images !== []) {
+                $this->attachDesignMedia($project, 'cover', $images[0]);
+                $this->attachDesignGallery($project, 'gallery', array_slice($images, 1));
+            }
+
+            $keptIds[] = $project->id;
+        }
+
+        Project::query()->whereNotIn('id', $keptIds)->update(['is_active' => false, 'show_in_home' => false]);
+        ProjectCategory::query()->whereNotIn('id', collect($categoryModels)->pluck('id'))->update(['is_active' => false]);
     }
 
     protected function syncHomePartners(Organization $organization): void
     {
-        $names = ['VAN SAN', 'GOLD', 'SP', 'TESLA', 'KPS', 'POLDAP', 'IPMT', 'BORE', 'PURE LIFE', 'ASHIRVAD', 'CARKIT', 'AXELON', 'SEVAL', 'DELIXI'];
+        $names = ['Interior', 'Architecture', 'Planning', 'Renovation', 'Fit-Out', 'Styling', 'Turnkey', 'Management', 'Lighting', 'Furniture'];
 
         foreach ($names as $index => $name) {
             Partner::query()->updateOrCreate(
@@ -456,93 +617,115 @@ class DemoContentSeeder extends Seeder
     {
         $definitions = [
             [PageEnum::HOME, SectionTypeEnum::HERO, 1, [
-                'sub_title' => ['en' => 'King Motors', 'ar' => 'كينج موتورز'],
-                'title' => ['en' => "Integrated solutions\nfor water pumping", 'ar' => "حلول متكاملة\nلضخ المياه"],
-                'text' => ['en' => 'Supply of submersible motors, pumps, pipes and cables for agricultural, industrial and project water systems.', 'ar' => 'توريد مواتير غاطسة وطلمبات ومواسير وكابلات لحلول ضخ المياه المتكاملة للزراعة والصناعة والمشروعات المختلفة.'],
-                'button_text' => ['en' => 'Discover our products', 'ar' => 'اكتشف منتجاتنا'],
-                'button_link_url' => '/products',
-                'image' => 'hero/hero-1.webp',
+                'sub_title' => ['en' => 'Touch of Class', 'ar' => 'Touch of Class'],
+                'title' => ['en' => "Interior design\nwith a touch of luxury", 'ar' => "تصميم داخلي\nبلمسة فخامة"],
+                'text' => ['en' => 'An interior studio that designs residential and commercial spaces where beauty and function meet, from the idea to delivery.', 'ar' => 'شركة تصميم داخلي تصمم مساحات سكنية وتجارية تجمع بين الجمال والوظيفة، من الفكرة حتى التنفيذ.'],
+                'button_text' => ['en' => 'View our work', 'ar' => 'اطّلع على أعمالنا'],
+                'button_link_url' => '/projects',
+                'image' => 'studio/hero-1.jpg',
             ]],
             [PageEnum::HOME, SectionTypeEnum::HERO, 2, [
-                'sub_title' => ['en' => 'King Motors', 'ar' => 'كينج موتورز'],
-                'title' => ['en' => "Submersible pumps and motors\nwith high efficiency", 'ar' => "طلمبات ومواتير غاطسة\nبأعلى كفاءة واعتمادية"],
-                'text' => ['en' => 'Water pumping technology for wells and large agricultural and industrial projects.', 'ar' => 'أحدث تكنولوجيا ضخ المياه للآبار الارتوازية والمشروعات الزراعية والصناعية الكبرى بمواصفات قياسية عالمية.'],
-                'button_text' => ['en' => 'Explore pumps', 'ar' => 'استكشف الطلمبات'],
-                'button_link_url' => '/products',
-                'image' => 'hero/hero-2.webp',
+                'sub_title' => ['en' => 'Touch of Class', 'ar' => 'Touch of Class'],
+                'title' => ['en' => "A renovation that gives a place\nits life and its details back", 'ar' => "تجديد يعيد للمكان\nحياته وتفاصيله"],
+                'text' => ['en' => 'We turn existing spaces into contemporary places that keep the character of the building and add comfort and elegance in every detail.', 'ar' => 'نحوّل المساحات القائمة لمكان معاصر يحافظ على طابع المبنى ويضيف راحة وأناقة في كل تفصيلة.'],
+                'button_text' => ['en' => 'Renovation services', 'ar' => 'خدمات التجديد'],
+                'button_link_url' => '/projects',
+                'image' => 'studio/hero-2.jpg',
             ]],
             [PageEnum::HOME, SectionTypeEnum::HERO, 3, [
-                'sub_title' => ['en' => 'King Motors', 'ar' => 'كينج موتورز'],
-                'title' => ['en' => "Networks and cables\nfor reliable operation", 'ar' => "شبكات وكابلات متطورة\nلقوة تشغيل مستدامة"],
-                'text' => ['en' => 'Submersible cables, high-pressure pipes, and protection panels built for continuous flow.', 'ar' => 'كابلات غاطسة، مواسير مقاومة للضغوط العالية، ولوحات تحكم وحماية كهربائية مصممة لضمان استمرارية التدفق.'],
-                'button_text' => ['en' => 'Our services', 'ar' => 'خدماتنا وقدراتنا'],
+                'sub_title' => ['en' => 'Touch of Class', 'ar' => 'Touch of Class'],
+                'title' => ['en' => "From the plan to handover\nfull project management", 'ar' => "من المخطط حتى التسليم\nإدارة مشروع كاملة"],
+                'text' => ['en' => 'We follow design, construction, schedule and cost until the project is finished at the required quality and on time.', 'ar' => 'نتابع التصميم والتنفيذ والجدول الزمني والتكلفة، حتى يُنجز المشروع بالجودة المطلوبة وفي موعده.'],
+                'button_text' => ['en' => 'Explore our services', 'ar' => 'تعرّف على خدماتنا'],
                 'button_link_url' => '/services',
-                'image' => 'hero/hero-3.webp',
+                'image' => 'studio/hero-3.jpg',
             ]],
             [PageEnum::HOME, SectionTypeEnum::ABOUTUS, 1, [
                 'sub_title' => ['en' => 'About the company', 'ar' => 'عن الشركة'],
-                'title' => ['en' => "Experience that supports\nevery drop of water", 'ar' => "خبرة تمتد\nلدعم كل قطرة ماء"],
-                'text' => ['en' => 'King Motors supplies motors, pumps, pipes and cables for water pumping across agriculture, industry and projects.', 'ar' => 'في كينج موتورز نعمل على توفير مجموعة متكاملة من المواتير والطلمبات والمواسير والكابلات لحلول ضخ المياه للزراعة والصناعة والمشروعات المختلفة، مع الالتزام بأعلى معايير الجودة والكفاءة.'],
-                'button_text' => ['en' => 'Learn more about us', 'ar' => 'تعرف أكثر عنا'],
+                'title' => ['en' => "Passion for design,\nprecision in execution", 'ar' => "شغف بالتصميم،\nدقة في التنفيذ"],
+                'text' => ['en' => 'At Touch of Class, interior design and architecture, we create spaces that feel effortless yet refined. We listen, we interpret, and we bring to life designs that echo our client\'s personal style, with comfort and function at every turn.', 'ar' => 'في Touch of Class للتصميم الداخلي والعمارة، بنصمم مساحات تبان بسيطة وراقية. بنسمع، وبنترجم، وبنحوّل التصميم لمساحة تعكس أسلوب العميل، براحة ووظيفة في كل تفصيلة.'],
+                'button_text' => ['en' => 'Learn more about us', 'ar' => 'اعرف المزيد عنا'],
                 'button_link_url' => '/about-us',
-                'image' => 'about/about.webp',
+                'image' => 'portfolio/about/passion.jpg',
+            ]],
+            [PageEnum::ABOUT, SectionTypeEnum::ABOUT_BREADCRUMB, 1, [
+                'title' => ['en' => 'About us', 'ar' => 'من نحن'],
+            ]],
+            [PageEnum::ABOUT, SectionTypeEnum::ABOUTUS, 1, [
+                'sub_title' => ['en' => 'About the company', 'ar' => 'عن الشركة'],
+                'title' => ['en' => "Passion for design,\nprecision in execution", 'ar' => "شغف بالتصميم،\nدقة في التنفيذ"],
+                'text' => ['en' => '<p>At Touch of Class, interior design and architecture, we\'re dedicated to creating spaces that feel effortless yet refined. Our approach is simple: we listen, we interpret, and we bring to life designs that echo our client\'s personal style while ensuring comfort and function at every turn.</p><p>Our team brings a diverse set of talents and an eye for detail to every project. We believe in creating spaces that are more than just beautiful. They are spaces that make you feel at ease. Led by our founders, Eng. Sarah Samir and Eng. Mohamed Khallaf, we blend experience with a deep love for design to craft homes and interiors that are as inviting as they are elegant.</p>', 'ar' => '<p>في Touch of Class للتصميم الداخلي والعمارة، بنصمّم مساحات تبان بسيطة وراقية. طريقتنا واضحة: بنسمع، وبنترجم، وبنحوّل التصميم لمساحة تعكس أسلوب العميل، مع راحة ووظيفة في كل تفصيلة.</p><p>الفريق يجمع خبرات مختلفة وعين على التفاصيل. المساحة عندنا مش بس شكل حلو، دي مساحة تحس فيها بالراحة. بقيادة المؤسسين، المهندسة سارة سمير والمهندس محمد خلاف، بنمزج الخبرة بحب التصميم عشان البيوت والتصميمات الداخلية تبقى دافية وأنيقة.</p>'],
+                'image' => 'portfolio/about/passion.jpg',
+            ]],
+            [PageEnum::ABOUT, SectionTypeEnum::VISION, 1, [
+                'sub_title' => ['en' => 'Vision', 'ar' => 'الرؤية'],
+                'title' => ['en' => "Trusted\npartner", 'ar' => "شريك\nموثوق"],
+                'text' => ['en' => '<p>To be the trusted partner by crafting distinctive interiors that reflect each client\'s personality and lifestyle — combining creative design, practical function, and timeless appeal.</p>', 'ar' => '<p>نبقى الشريك الموثوق في تصميم داخلي مميز يعكس شخصية كل عميل وأسلوب حياته، ويجمع بين التصميم الإبداعي والوظيفة العملية والشكل اللي يعيش.</p>'],
+                'image' => 'portfolio/qatar-villas/01.jpg',
+            ]],
+            [PageEnum::ABOUT, SectionTypeEnum::MISSION, 1, [
+                'sub_title' => ['en' => 'Mission', 'ar' => 'الرسالة'],
+                'title' => ['en' => "Welcoming\nspaces", 'ar' => "مساحات\nترحب بيك"],
+                'text' => ['en' => '<p>Our mission is to provide personalized interior design solutions that blend timeless elegance with each client\'s unique taste, ensuring every space feels both welcoming and uniquely theirs.</p>', 'ar' => '<p>رسالتنا نقدم حلول تصميم داخلي خاصة بكل عميل، تمزج الأناقة الخالدة بذوقه، عشان كل مساحة تبقى مرحّبة وبتخصّه هو.</p>'],
+                'image' => 'portfolio/hayaty-residence/01.jpg',
             ]],
             [PageEnum::HOME, SectionTypeEnum::SERVICES, 1, [
                 'sub_title' => ['en' => 'Our services', 'ar' => 'خدماتنا'],
-                'title' => ['en' => "Our\nmain services", 'ar' => "خدماتنا\nالرئيسية"],
-                'text' => ['en' => 'Specialized support for water pumping systems across different projects.', 'ar' => 'حلول متكاملة ومتخصصة لدعم أنظمة ضخ المياه وتلبية احتياجات مختلف المشروعات بكفاءة واعتمادية.'],
+                'title' => ['en' => 'Our', 'ar' => 'خدماتنا'],
+                'second_title' => ['en' => 'main services', 'ar' => 'الرئيسية'],
+                'text' => ['en' => 'Five services covering interior design, architecture, planning, renovation and project management.', 'ar' => 'خمس خدمات متكاملة تغطي التصميم الداخلي، المعماري، التخطيط، التجديد، وإدارة المشروع.'],
                 'button_text' => ['en' => 'View all services', 'ar' => 'عرض جميع الخدمات'],
                 'button_link_url' => '/services',
             ]],
             [PageEnum::HOME, SectionTypeEnum::FEATURED_PRODUCTS, 1, [
-                'sub_title' => ['en' => 'Product categories', 'ar' => 'فئات المنتجات'],
-                'title' => ['en' => "Our\nproduct categories", 'ar' => "فئات\nمنتجاتنا"],
-                'text' => ['en' => 'A complete range of pumping systems and industrial equipment.', 'ar' => 'مجموعة متكاملة من منتجات أنظمة الضخ والمعدات الصناعية لتلبية احتياجات مختلف المشروعات بكفاءة وجودة عالية.'],
-                'button_text' => ['en' => 'View all products', 'ar' => 'عرض جميع المنتجات'],
-                'button_link_url' => '/products',
-                'image' => 'products/products-banner.webp',
+                'sub_title' => ['en' => 'Our work', 'ar' => 'أعمالنا'],
+                'title' => ['en' => "Selected\nprojects", 'ar' => "مشاريع\nمختارة"],
+                'text' => ['en' => 'Residential and commercial spaces we designed with care, from villas and offices to a full renovation.', 'ar' => 'مجموعة من المساحات السكنية والتجارية التي صممناها بعناية، من الفلل والمكاتب حتى التجديد الكامل.'],
+                'button_text' => ['en' => 'View all projects', 'ar' => 'عرض كل المشاريع'],
+                'button_link_url' => '/projects',
+                'image' => 'studio/urban.jpg',
             ]],
             [PageEnum::HOME, SectionTypeEnum::PROCESS, 1, [
-                'sub_title' => ['en' => 'Pump selection', 'ar' => 'اختيار الطلمبة'],
-                'title' => ['en' => "Choose\nthe right pump\nfor the duty point", 'ar' => "اختر\nالطلمبة المناسبة\nلنقطة التشغيل"],
-                'text' => ['en' => 'Enter the required flow and total head to identify a suitable pump.', 'ar' => 'أدخل معدل التصرف والضغط الكلي المطلوب، لنساعدك في تحديد الطلمبة الأنسب من مجموعة منتجاتنا بسرعة وسهولة.'],
+                'sub_title' => ['en' => 'Start a project', 'ar' => 'ابدأ مشروعك'],
+                'title' => ['en' => "Book\na consultation\nfor your space", 'ar' => "احجز\nاستشارة\nلمساحتك"],
+                'text' => ['en' => 'Tell us about the space and we will help you shape the design, from the first idea to delivery.', 'ar' => 'احكيلنا عن المساحة، ونساعدك تحدد التصميم المناسب من الفكرة حتى التنفيذ.'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::PROCESS_STEP, 1, [
-                'title' => ['en' => 'Specialist support', 'ar' => 'دعم فني متخصص'],
+                'title' => ['en' => 'Understand the space', 'ar' => 'فهم المساحة'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::PROCESS_STEP, 2, [
-                'title' => ['en' => 'A wide product range', 'ar' => 'مجموعة واسعة من المنتجات'],
+                'title' => ['en' => 'Draw the design', 'ar' => 'رسم التصميم'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::PROCESS_STEP, 3, [
-                'title' => ['en' => 'Saves time and effort', 'ar' => 'يوفر الوقت والجهد'],
+                'title' => ['en' => 'Choose the materials', 'ar' => 'اختيار الخامات'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::PROCESS_STEP, 4, [
-                'title' => ['en' => 'Accurate selection', 'ar' => 'دقة في الاختيار'],
+                'title' => ['en' => 'Follow the build', 'ar' => 'متابعة التنفيذ'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::CLIENTS, 1, [
                 'sub_title' => ['en' => 'Success partners', 'ar' => 'شركاء النجاح'],
-                'title' => ['en' => "Brands\nwe trust", 'ar' => "ماركات\nعالمية\nنثق فيها"],
+                'title' => ['en' => "Integrated services\nunder one roof", 'ar' => "خدمات\nمتكاملة\nتحت سقف واحد"],
             ]],
             [PageEnum::HOME, SectionTypeEnum::WHY_CHOOSE_US, 1, [
-                'sub_title' => ['en' => 'Why us', 'ar' => 'لماذا نحن'],
-                'title' => ['en' => "Why choose\nKing Motors?", 'ar' => "ليه تختار\nكينج موتورز؟"],
-                'text' => ['en' => 'A reliable partner for motors, pumps, pipes and cables.', 'ar' => 'شريكك الموثوق في توريد المواتير والمضخات والمواسير والكابلات، بخبرة فنية تضمن لك الحل المناسب لكل مشروع وبأفضل قيمة.'],
+                'sub_title' => ['en' => 'Values', 'ar' => 'قيمنا'],
+                'title' => ['en' => "What guides\nevery project", 'ar' => "اللي بيوجّه\nكل مشروع"],
+                'text' => ['en' => 'We listen, we interpret, and we bring to life designs that echo our client\'s personal style while ensuring comfort and function at every turn.', 'ar' => 'بنسمع، وبنترجم، وبننفذ تصميم يعكس أسلوب العميل، مع راحة ووظيفة في كل تفصيلة.'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::BENEFITS, 1, [
-                'title' => ['en' => 'Guaranteed quality', 'ar' => 'جودة مضمونة'],
-                'text' => ['en' => 'Original products from trusted brands with a certified warranty.', 'ar' => 'منتجات أصلية من أقوى الماركات العالمية بضمان معتمد.'],
+                'title' => ['en' => 'Elegance & Quality', 'ar' => 'الأناقة والجودة'],
+                'text' => ['en' => 'We prioritize timeless elegance and high-quality craftsmanship in every detail.', 'ar' => 'نضع الأناقة الخالدة والحرفية العالية في كل تفصيلة.'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::BENEFITS, 2, [
-                'title' => ['en' => 'Technical experience', 'ar' => 'خبرة فنية'],
-                'text' => ['en' => 'Engineers help you choose the product that fits the job.', 'ar' => 'فريق مهندسين يساعدك تختار المنتج الأنسب لاحتياجك.'],
+                'title' => ['en' => 'Personalization', 'ar' => 'التخصيص'],
+                'text' => ['en' => 'We believe each space should reflect the individuality of its owner, so we customize designs to tell each client\'s unique story.', 'ar' => 'كل مساحة لازم تعكس شخصية صاحبها، عشان كده بنخصص التصميم ليحكي قصته.'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::BENEFITS, 3, [
-                'title' => ['en' => 'Fast supply', 'ar' => 'توريد سريع'],
-                'text' => ['en' => 'Ready stock and delivery across the country.', 'ar' => 'مخزون جاهز وتوصيل سريع لكل محافظات الجمهورية.'],
+                'title' => ['en' => 'Innovation & Creativity', 'ar' => 'الابتكار والإبداع'],
+                'text' => ['en' => 'We embrace innovative ideas and creative solutions to bring fresh perspectives to every project.', 'ar' => 'نتبنى الأفكار الجديدة والحلول المبتكرة عشان نضيف منظور جديد لكل مشروع.'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::BENEFITS, 4, [
-                'title' => ['en' => 'After-sales support', 'ar' => 'دعم ما بعد البيع'],
-                'text' => ['en' => 'Maintenance, spare parts and follow-up after installation.', 'ar' => 'صيانة وقطع غيار ومتابعة مستمرة بعد التركيب.'],
+                'title' => ['en' => 'Integrity & Trust', 'ar' => 'النزاهة والثقة'],
+                'text' => ['en' => 'We are committed to honesty and transparency, building lasting relationships based on trust.', 'ar' => 'ملتزمون بالصدق والشفافية، وبنبني علاقات تدوم على الثقة.'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::STATISTICS, 1, [
                 'title' => ['en' => '15+', 'ar' => '15+'],
@@ -550,61 +733,61 @@ class DemoContentSeeder extends Seeder
             ]],
             [PageEnum::HOME, SectionTypeEnum::STATISTICS, 2, [
                 'title' => ['en' => '2500+', 'ar' => '2500+'],
-                'text' => ['en' => 'Clients who trust us', 'ar' => 'عميل يثق فينا'],
+                'text' => ['en' => 'Clients who trust us', 'ar' => 'عميل يثق بنا'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::STATISTICS, 3, [
                 'title' => ['en' => '600+', 'ar' => '600+'],
-                'text' => ['en' => 'Completed projects', 'ar' => 'مشروع تم تنفيذه'],
+                'text' => ['en' => 'Projects delivered', 'ar' => 'مشروع تم تنفيذه'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::STATISTICS, 4, [
                 'title' => ['en' => '1200+', 'ar' => '1200+'],
-                'text' => ['en' => 'Available products', 'ar' => 'منتج متاح'],
+                'text' => ['en' => 'Completed projects', 'ar' => 'مشروع منجز'],
             ]],
             [PageEnum::HOME, SectionTypeEnum::BLOGS, 1, [
                 'sub_title' => ['en' => 'Our articles', 'ar' => 'مقالاتنا'],
                 'title' => ['en' => "Latest\narticles", 'ar' => "أحدث\nالمقالات"],
-                'text' => ['en' => 'Technical notes that help you choose the right pump and understand water systems.', 'ar' => 'مقالات ونصائح تقنية تساعدك في اختيار الطلمبة المناسبة وفهم أنظمة ضخ المياه والصناعات المختلفة.'],
+                'text' => ['en' => 'Ideas and advice on interior design, renovation, materials and lighting.', 'ar' => 'أفكار ونصائح في التصميم الداخلي والتجديد واختيار الخامات والإضاءة.'],
                 'button_text' => ['en' => 'View all articles', 'ar' => 'عرض جميع المقالات'],
                 'button_link_url' => '/news',
             ]],
             [PageEnum::HOME, SectionTypeEnum::CONTACT_US_CONTENT, 1, [
                 'sub_title' => ['en' => 'Call us', 'ar' => 'اتصل بنا'],
                 'title' => ['en' => "Contact\nus", 'ar' => "تواصل\nمعـنا"],
-                'text' => ['en' => 'Our team helps you choose the right pump for the project.', 'ar' => 'فريقنا جاهز لمساعدتك في اختيار الطلمبة الأنسب وتقديم الحلول المناسبة لمتطلبات مشروعك.'],
-                'image' => 'contact/contact-pumps.webp',
+                'text' => ['en' => 'Our team is ready to help you start the right project and offer a solution that fits it.', 'ar' => 'فريقنا جاهز لمساعدتك في ابدأ مشروعك الأنسب وتقديم الحلول المناسبة لمتطلبات مشروعك.'],
+                'image' => 'studio/contact-side.jpg',
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::CONTACT_US_CONTENT, 1, [
-                'title' => ['en' => 'Contact us', 'ar' => 'تواصل معنا'],
-                'text' => ['en' => 'Tell us about the project and we will help you choose the right equipment.', 'ar' => 'احكيلنا عن المشروع وهنساعدك تختار المعدة المناسبة.'],
+                'title' => ['en' => "Let's talk about your project", 'ar' => 'لنتحدث عن مشروعك'],
+                'text' => ['en' => 'Please fill in the details and we will contact you as soon as we can.', 'ar' => 'يرجى تعبئة البيانات، وسنتواصل معك في أقرب وقت.'],
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::BENEFITS, 1, [
-                'title' => ['en' => 'Reply within two hours', 'ar' => 'رد خلال ساعتين'],
+                'title' => ['en' => 'Saturday to Thursday', 'ar' => 'السبت – الخميس'],
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::BENEFITS, 2, [
-                'title' => ['en' => 'Delivery across the country', 'ar' => 'توصيل لكل المحافظات'],
+                'title' => ['en' => '9:00 AM – 6:00 PM', 'ar' => '9:00 ص – 6:00 م'],
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::BENEFITS, 3, [
-                'title' => ['en' => '+15 years of experience', 'ar' => '+15 سنة خبرة'],
+                'title' => ['en' => 'Friday off', 'ar' => 'الجمعة إجازة'],
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::CONTENT, 1, [
                 'sub_title' => ['en' => 'Contact channels', 'ar' => 'طرق التواصل'],
-                'title' => ['en' => 'Choose what suits you', 'ar' => 'اختار الأنسب ليك'],
-                'text' => ['en' => 'We are available on every channel. Pick the one you prefer and we will reply as soon as we can.', 'ar' => 'إحنا موجودين على كل القنوات، اختار اللي يريحك وهنرد عليك في أسرع وقت.'],
+                'title' => ['en' => 'Choose what suits you', 'ar' => 'اختر الأنسب لك'],
+                'text' => ['en' => 'We are available on every channel. Choose the one that suits you and we will reply as soon as we can.', 'ar' => 'نحن متاحون عبر جميع القنوات. اختر الوسيلة المناسبة لك، وسنرد عليك في أسرع وقت.'],
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::FEATURES, 1, [
                 'title' => ['en' => 'WhatsApp', 'ar' => 'واتساب'],
-                'text' => ['en' => 'Fastest way to reply and send photos of the pump or the fault.', 'ar' => 'الأسرع للرد وإرسال صور الطلمبة أو العطل.'],
+                'text' => ['en' => 'The fastest way to reply and send photos of the space or the plan.', 'ar' => 'الأسرع للرد وإرسال صور المساحة أو المخطط.'],
                 'button_text' => ['en' => 'Start a chat', 'ar' => 'ابدأ المحادثة'],
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::FEATURES, 2, [
                 'title' => ['en' => 'Direct call', 'ar' => 'اتصال مباشر'],
-                'text' => ['en' => 'Call a sales engineer if the request is urgent.', 'ar' => 'كلم مهندس المبيعات لو طلبك مستعجل.'],
+                'text' => ['en' => 'Speak with a sales consultant if your request is urgent.', 'ar' => 'تواصل مع مستشار المبيعات إذا كان طلبك عاجلاً.'],
                 'button_text' => ['en' => 'Call now', 'ar' => 'اتصل الآن'],
             ]],
             [PageEnum::CONTACT, SectionTypeEnum::FEATURES, 3, [
                 'title' => ['en' => 'Email', 'ar' => 'البريد الإلكتروني'],
                 'text' => ['en' => 'For official quotations and tenders.', 'ar' => 'لعروض الأسعار الرسمية والمناقصات.'],
-                'button_text' => ['en' => 'Send an email', 'ar' => 'ابعت إيميل'],
+                'button_text' => ['en' => 'Send an email', 'ar' => 'أرسل بريداً'],
             ]],
         ];
 
@@ -655,16 +838,16 @@ class DemoContentSeeder extends Seeder
                 'type' => BranchTypeEnum::Main,
             ],
             [
-                'name' => ['en' => '6th of October', 'ar' => '6 أكتوبر'],
-                'address' => ['en' => '10 Industrial Street, 6th of October, Giza, Egypt', 'ar' => '10 شارع الصناعة الصناعية، 6 أكتوبر، الجيزة، مصر'],
+                'name' => ['en' => 'Cairo', 'ar' => 'القاهرة'],
+                'address' => ['en' => 'Cairo, Arab Republic of Egypt', 'ar' => 'القاهرة، جمهورية مصر العربية'],
                 'phone_1_country_code' => '20',
-                'phone_1' => '1001234567',
-                'phone_2_country_code' => '20',
-                'phone_2' => '1007654321',
-                'email' => 'info@kingmotors.com',
-                'working_hours' => ['en' => 'Sunday to Thursday, 9:00 AM – 5:00 PM', 'ar' => 'من الأحد إلى الخميس، 9:00 صباحاً – 5:00 مساءً'],
-                'map_url' => 'https://www.google.com/maps?q=6th+of+October+City,Giza,Egypt',
-                'map_embed' => 'https://www.google.com/maps?q=6th+of+October+City,Giza,Egypt&z=13&output=embed',
+                'phone_1' => '1112302002',
+                'phone_2_country_code' => null,
+                'phone_2' => null,
+                'email' => 'info@touchofclass.com',
+                'working_hours' => ['en' => 'Saturday to Thursday, 9:00 AM – 6:00 PM', 'ar' => 'من السبت إلى الخميس، 9:00 صباحًا – 6:00 مساءً'],
+                'map_url' => 'https://www.google.com/maps?q=Cairo,Egypt',
+                'map_embed' => 'https://www.google.com/maps?q=Cairo,Egypt&z=13&output=embed',
                 'is_active' => true,
                 'order' => 1,
             ]
@@ -680,16 +863,16 @@ class DemoContentSeeder extends Seeder
     {
         $items = [
             [
-                'question' => ['en' => 'How do I choose the right pump?', 'ar' => 'إزاي أختار الطلمبة المناسبة؟'],
-                'answer' => ['en' => 'Share the required flow, head and power source and our team will recommend a pump.', 'ar' => 'ابعت التصرف والضغط ومصدر الكهرباء، وفريقنا هيقترح الطلمبة المناسبة.'],
+                'question' => ['en' => 'How do we start a project?', 'ar' => 'إزاي نبدأ المشروع؟'],
+                'answer' => ['en' => 'Tell us about the space and how you use it. We then prepare the layout, materials and a clear schedule.', 'ar' => 'احكيلنا عن المساحة وطريقة استخدامك لها، وبعدها نجهز التوزيع والخامات والجدول.'],
             ],
             [
-                'question' => ['en' => 'Do you supply spare parts?', 'ar' => 'بتوفروا قطع غيار؟'],
-                'answer' => ['en' => 'Yes. We supply spare parts for pumps, motors and related equipment.', 'ar' => 'أيوة، بنوفر قطع غيار للمضخات والمواتير والمعدات المرتبطة.'],
+                'question' => ['en' => 'Do you renovate existing homes?', 'ar' => 'بتعملوا تجديد للمنازل القائمة؟'],
+                'answer' => ['en' => 'Yes. We renovate existing spaces while keeping the character of the building.', 'ar' => 'أيوة، بنجدد المساحات القائمة مع الحفاظ على طابع المبنى.'],
             ],
             [
                 'question' => ['en' => 'What are your working hours?', 'ar' => 'مواعيد العمل إيه؟'],
-                'answer' => ['en' => 'Sunday to Thursday, 9:00 AM to 5:00 PM.', 'ar' => 'من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً.'],
+                'answer' => ['en' => 'Saturday to Thursday, 9:00 AM to 6:00 PM. Friday is off.', 'ar' => 'من السبت إلى الخميس، من 9:00 صباحًا حتى 6:00 مساءً. الجمعة إجازة.'],
             ],
         ];
 
@@ -731,22 +914,93 @@ class DemoContentSeeder extends Seeder
                 'service_id' => $services[0]->id ?? null,
                 'name' => 'أحمد محمود',
                 'phone' => '+201000000000',
-                'project_type' => 'pump',
-                'message' => 'محتاج عرض سعر لمضخة غاطسة بتصرف 18 متر مكعب في الساعة.',
+                'project_type' => 'interior',
+                'message' => 'محتاج استشارة لتصميم شقة سكنية.',
                 'is_read' => false,
             ]
         );
 
         NewsletterSubscriber::query()
             ->where('email', 'guest@minapack.example')
-            ->update(['email' => 'guest@kingmotors.example']);
+            ->update(['email' => 'guest@touchofclass.example']);
+
+        NewsletterSubscriber::query()
+            ->where('email', 'guest@kingmotors.example')
+            ->update(['email' => 'guest@touchofclass.example']);
 
         NewsletterSubscriber::query()->firstOrCreate(
             [
                 'organization_id' => $organization->id,
-                'email' => 'guest@kingmotors.example',
+                'email' => 'guest@touchofclass.example',
             ]
         );
+    }
+
+    protected function syncFounders(): void
+    {
+        $founders = [
+            [1, 'portfolio/team/portrait-1.jpg', 'Eng. Sarah Samir', 'م. سارة سمير', 'Founder', 'مؤسسة'],
+            [2, 'portfolio/team/portrait-2.jpg', 'Eng. Mohamed Khallaf', 'م. محمد خلاف', 'Founder', 'مؤسس'],
+        ];
+
+        $keptIds = [];
+
+        foreach ($founders as [$order, $image, $nameEn, $nameAr, $titleEn, $titleAr]) {
+            $member = Team::query()->updateOrCreate(
+                ['order' => $order],
+                [
+                    'name' => ['en' => $nameEn, 'ar' => $nameAr],
+                    'title' => ['en' => $titleEn, 'ar' => $titleAr],
+                    'is_active' => true,
+                ]
+            );
+            $this->attachDesignMedia($member, 'teams', $image);
+            $keptIds[] = $member->id;
+        }
+
+        Team::query()->whereNotIn('id', $keptIds)->update(['is_active' => false]);
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function portfolioImages(string $slug): array
+    {
+        $directory = public_path('assets/images/portfolio/'.$slug);
+
+        if (! is_dir($directory)) {
+            return [];
+        }
+
+        return collect(File::files($directory))
+            ->sortBy(fn (SplFileInfo $file): string => $file->getFilename())
+            ->map(fn (SplFileInfo $file): string => 'portfolio/'.$slug.'/'.$file->getFilename())
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  list<string>  $relativePaths
+     */
+    protected function attachDesignGallery(object $model, string $collection, array $relativePaths): void
+    {
+        if (! method_exists($model, 'clearMediaCollection') || ! method_exists($model, 'addMedia')) {
+            return;
+        }
+
+        $model->clearMediaCollection($collection);
+
+        foreach ($relativePaths as $relativePath) {
+            $absolutePath = public_path('assets/images/'.$relativePath);
+
+            if (! is_file($absolutePath)) {
+                continue;
+            }
+
+            $model->addMedia($absolutePath)
+                ->preservingOriginal()
+                ->toMediaCollection($collection);
+        }
     }
 
     protected function lockSlug(Model $model, string $slug): void
@@ -775,34 +1029,13 @@ class DemoContentSeeder extends Seeder
 
     protected function syncProductCatalogs(): void
     {
-        $this->publishCatalogDirectory();
+        $assignments = [];
 
-        $assignments = [
-            'KM-P-VANSAN' => [['Data Vansan Pumps', 'VAN SAN pumps catalogue', 'كتالوج طلمبات VAN SAN']],
-            'KM-P-GOLD' => [['Data Gold Pumps', 'GOLD pumps catalogue', 'كتالوج طلمبات GOLD']],
-            'KM-P-SP' => [
-                ['Data SP pumps', 'SP pumps data', 'بيانات طلمبات SP'],
-                ['SP catalogue', 'SP 4, 5 and 6 inch catalogue', 'كتالوج SP 4 و5 و6 بوصة'],
-            ],
-            'KM-P-TESLA' => [['TESLA CATALOUGE', 'TESLA catalogue', 'كتالوج TESLA']],
-            'KM-P-KPS' => [['Data Kps Pumps', 'KPS pumps catalogue', 'كتالوج طلمبات KPS']],
-            'KM-M-SP' => [['SP catalogue', 'SP 4, 5 and 6 inch catalogue', 'كتالوج SP 4 و5 و6 بوصة']],
-            'KM-M-POLDAP' => [['Data Poldap Motors', 'Poldap motors catalogue', 'كتالوج مواتير Poldap']],
-            'KM-M-KPS' => [
-                ['Data 8 inch kps motor', 'KPS 8 inch motor data', 'بيانات موتور KPS 8 بوصة'],
-                ['Data motor kps 6', 'KPS 6 inch motor data', 'بيانات موتور KPS 6 بوصة'],
-            ],
-            'KM-M-VANSAN' => [['Data Vansan Motors', 'Van San motors catalogue', 'كتالوج مواتير Van San']],
-            'KM-M-IPMT' => [['Data IPMT Pumps', 'IPMT catalogue', 'كتالوج IPMT']],
-            'KM-PIPE-BORE' => [['Data Bore Power', 'Bore Power catalogue', 'كتالوج Bore Power']],
-            'KM-PIPE-PURELIFE' => [['Data Pure Life', 'Pure Life catalogue', 'كتالوج Pure Life']],
-            'KM-PIPE-ASHIRVAD' => [['Data  ASHIRVAD', 'Ashirvad uPVC catalogue', 'كتالوج Ashirvad uPVC']],
-            'KM-PIPE-PURE' => [['Pure Pipe Catalogue', 'Pure Pipe catalogue', 'كتالوج Pure Pipe']],
-            'KM-C-CARKIT' => [['Data Carkit', 'Carkit catalogue', 'كتالوج Carkit']],
-            'KM-C-AXELON' => [['AXelon catalogue', 'Axelon catalogue', 'كتالوج Axelon']],
-            'KM-C-SEVAL' => [['Data Seval', 'SEVAL catalogue', 'كتالوج SEVAL']],
-            'KM-INV-DELIXI' => [['DELIXI SPD-C1', 'Delixi inverter panel data', 'بيانات لوحة انفرتر Delixi']],
-        ];
+        if ($assignments === [] || ! is_dir(resource_path('design/data'))) {
+            return;
+        }
+
+        $this->publishCatalogDirectory();
 
         $files = collect(File::files(resource_path('design/data')));
 

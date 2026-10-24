@@ -148,6 +148,28 @@
     </div>
   </section>
 
+  @if (($founders ?? []) !== [])
+    <section class="km-about-block">
+      <div class="container">
+        <div class="row justify-content-center g-4 g-lg-5">
+          @foreach ($founders as $founder)
+            <div class="col-10 col-sm-6 col-lg-4 text-center">
+              @if ($founder['image'])
+                <div class="km-about-figure">
+                  <div class="km-about-image">
+                    <img src="{{ $founder['image'] }}" alt="{{ $founder['name'] }}" width="600" height="800" loading="lazy" decoding="async">
+                  </div>
+                </div>
+              @endif
+              <h3 class="h5 mt-3 mb-1">{{ $founder['name'] }}</h3>
+              <p class="mb-0">{{ $founder['title'] }}</p>
+            </div>
+          @endforeach
+        </div>
+      </div>
+    </section>
+  @endif
+
   <!--
   ##################################################
   #                  Footer                        #

@@ -22,12 +22,11 @@ it('shows an empty cart before anything is added', function () {
     $this->get('/cart')
         ->assertOk()
         ->assertSee('سلتك فاضية', false)
-        ->assertDontSee('GRUNDFOS', false)
-        ->assertSee('class="cart-badge">0', false);
+        ->assertDontSee('GRUNDFOS', false);
 });
 
 it('adds the current product and quantity to the cart', function () {
-    $product = Product::query()->where('code', 'KM-P-SP')->firstOrFail();
+    $product = Product::query()->where('code', 'TOC-RES-03')->firstOrFail();
 
     $this->get('/products/'.$product->getRouteKey())
         ->assertOk()
@@ -48,7 +47,6 @@ it('adds the current product and quantity to the cart', function () {
         ->assertOk()
         ->assertSee($product->name, false)
         ->assertSee('name="items['.$product->id.'][qty]" value="3"', false)
-        ->assertSee('class="cart-badge">3', false)
         ->assertDontSee('GRUNDFOS', false);
 });
 
@@ -65,7 +63,7 @@ it('rejects a product that is not in the catalog', function () {
 });
 
 it('sends the cart quote to WhatsApp', function () {
-    $product = Product::query()->where('code', 'KM-P-SP')->firstOrFail();
+    $product = Product::query()->where('code', 'TOC-RES-03')->firstOrFail();
 
     $this->post('/cart', [
         'product_id' => $product->id,
@@ -85,11 +83,11 @@ it('sends the cart quote to WhatsApp', function () {
     $response->assertRedirect();
     expect($response->headers->get('Location'))
         ->toContain('https://wa.me/')
-        ->toContain('KM-P-SP');
+        ->toContain('TOC-RES-03');
 });
 
 it('removes a product from the cart', function () {
-    $product = Product::query()->where('code', 'KM-C-CARKIT')->firstOrFail();
+    $product = Product::query()->where('code', 'TOC-ARC-04')->firstOrFail();
 
     $this->post('/cart', [
         'product_id' => $product->id,
@@ -103,5 +101,5 @@ it('removes a product from the cart', function () {
     $this->get('/cart')
         ->assertOk()
         ->assertSee('سلتك فاضية', false)
-        ->assertDontSee('KM-C-CARKIT', false);
+        ->assertDontSee('TOC-ARC-04', false);
 });

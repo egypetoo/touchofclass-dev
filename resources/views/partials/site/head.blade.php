@@ -4,7 +4,7 @@
 
 @include('components.seo.head')
 
-<link rel="icon" type="image/webp" href="{{ asset('assets/images/logo/logo-transparent.webp') }}" />
+<link rel="icon" type="image/webp" href="{{ $siteLogoUrl ?? asset('assets/images/logo/logo-clear.png') }}" />
 <link rel="manifest" href="{{ route('manifest') }}">
 <meta name="theme-color" content="{{ \App\Models\PwaSetting::active()->theme_color ?? '#062e22' }}">
 
@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&display=swap" />
 
-<link rel="preload" as="image" href="{{ asset('assets/images/logo/logo-transparent.webp') }}" />
+<link rel="preload" as="image" href="{{ $siteLogoUrl ?? asset('assets/images/logo/logo-clear.png') }}" />
 @if (request()->routeIs('home'))
-    <link rel="preload" as="image" href="{{ asset('assets/images/hero/hero-1.webp') }}" fetchpriority="high" />
+    <link rel="preload" as="image" href="{{ $siteLogoUrl ?? asset('assets/images/hero/hero-1.webp') }}" fetchpriority="high" />
 @endif
 
 <link rel="stylesheet" href="{{ Path::cssPath('all.min.css') }}" />

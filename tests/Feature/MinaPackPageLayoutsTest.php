@@ -27,9 +27,9 @@ beforeEach(function () {
 it('renders the real catalog on the home products section', function () {
     $this->get('/')
         ->assertOk()
-        ->assertSee('KM-P-VANSAN', false)
-        ->assertSee('data-cat="deep-well-motors"', false)
-        ->assertSee('data-cat="electrical-panels"', false)
+        ->assertSee('Mivida', false)
+        ->assertSee('data-cat="residential"', false)
+        ->assertSee('data-cat="architecture"', false)
         ->assertDontSee('موتور كهربائي IE3', false)
         ->assertDontSee('(280 منتج)', false);
 });
@@ -47,10 +47,10 @@ it('renders the main categories page from the products menu', function () {
     $this->get('/categories')
         ->assertOk()
         ->assertSee('km-cat-card', false)
-        ->assertSee('Deep Well Pumps', false)
-        ->assertSee('Deep Well Motors', false)
-        ->assertSee('Electrical Panels', false)
-        ->assertSee(route('products.index', ['category' => 'deep-well-pumps']), false)
+        ->assertSee('Residential', false)
+        ->assertSee('Commercial', false)
+        ->assertSee('Architecture', false)
+        ->assertSee(route('products.index', ['category' => 'residential']), false)
         ->assertSee(route('categories.index'), false);
 });
 
@@ -60,11 +60,11 @@ it('renders the King Motors products catalog', function () {
     $this->get('/products')
         ->assertOk()
         ->assertSee('km-shop', false)
-        ->assertSee('Deep Well Pumps', false)
-        ->assertSee(trans_choice('site.home_products_count', 5, ['count' => 5]), false)
+        ->assertSee('Residential', false)
+        ->assertSee('<span>Residential</span><small>6</small>', false)
         ->assertDontSee('منتج واحد', false)
-        ->assertSee('VAN SAN', false)
-        ->assertSee('deep-well-pumps', false)
+        ->assertSee('Sheikh Zayed Villa', false)
+        ->assertSee('residential', false)
         ->assertSee(__('site.our_products'), false)
         ->assertSee(__('site.home_view_details'), false)
         ->assertDontSee('موتور كهربائي IE3', false)
@@ -72,45 +72,43 @@ it('renders the King Motors products catalog', function () {
 });
 
 it('filters the catalog by category, brand, and search', function () {
-    $this->get('/products?category=deep-well-motors')
+    $this->get('/products?category=commercial')
         ->assertOk()
-        ->assertSee('POLDAP', false)
-        ->assertDontSee('Bore Power', false)
-        ->assertDontSee('Pure Life', false);
+        ->assertSee('Dallas Villa', false)
+        ->assertDontSee('Sheikh Zayed Villa', false)
+        ->assertDontSee('Lake House', false);
 
-    $this->get('/products?category=submersible-cables')
+    $this->get('/products?category=renovation')
         ->assertOk()
-        ->assertSee('KM-C-AXELON', false)
-        ->assertDontSee('KM-P-VANSAN', false);
+        ->assertSee('TOC-REN-01', false)
+        ->assertDontSee('TOC-RES-01', false);
 
-    $this->get('/products?category=electrical-panels')
+    $this->get('/products?category=architecture')
         ->assertOk()
-        ->assertSee('KM-INV-DELIXI', false)
-        ->assertDontSee('KM-C-AXELON', false);
+        ->assertSee('TOC-ARC-01', false)
+        ->assertDontSee('TOC-REN-01', false);
 
-    $this->get('/products?brand[]=SP')
+    $this->get('/products?brand[]=Penthouse')
         ->assertOk()
-        ->assertSee('KM-P-SP', false)
-        ->assertSee('KM-M-SP', false)
-        ->assertDontSee('KM-P-TESLA', false);
+        ->assertSee('TOC-RES-03', false)
+        ->assertDontSee('TOC-COM-02', false);
 
-    $this->get('/products?q=TESLA')
+    $this->get('/products?q=Brooklyn')
         ->assertOk()
-        ->assertSee('KM-P-TESLA', false)
-        ->assertDontSee('KM-P-VANSAN', false);
+        ->assertSee('TOC-REN-04', false)
+        ->assertDontSee('TOC-RES-01', false);
 });
 
 it('renders the product details page from the new design', function () {
-    $product = Product::query()->where('code', 'KM-P-SP')->firstOrFail();
+    $product = Product::query()->where('code', 'TOC-RES-03')->firstOrFail();
 
     $this->get('/products/'.$product->getTranslation('slug', 'en'))
         ->assertOk()
         ->assertSee('km-pd', false)
         ->assertSee($product->name, false)
-        ->assertSee('KM-P-SP', false)
-        ->assertSee('km-p-sp.jpg', false)
-        ->assertSee('42 m³/h', false)
-        ->assertSee('SP pumps data', false)
+        ->assertSee('TOC-RES-03', false)
+        ->assertSee('penthouse.jpg', false)
+        ->assertDontSee('42 m³/h', false)
         ->assertDontSee('GRUNDFOS', false)
         ->assertSee(__('site.home_add_to_cart'), false)
         ->assertSee(__('site.product_specs'), false)
@@ -121,17 +119,17 @@ it('renders the services index with the design cards', function () {
     $this->get('/services')
         ->assertOk()
         ->assertSee('service-card', false)
-        ->assertSee('Technical Consulting', false)
-        ->assertSee('Spare Parts', false)
-        ->assertSee('Supply and Installation', false)
-        ->assertDontSee('استشارات', false);
+        ->assertSee('Interior Design', false)
+        ->assertSee('Architectural Design', false)
+        ->assertSee('Master Planning', false)
+        ->assertDontSee('التصميم الداخلي', false);
 });
 
 it('renders the clients page without retired packaging clients', function () {
     $this->get('/partners')
         ->assertOk()
         ->assertDontSee('Danone', false)
-        ->assertSee('VAN SAN', false)
+        ->assertSee('Interior', false)
         ->assertDontSee(__('site.no_items_yet'), false);
 });
 
@@ -178,20 +176,20 @@ it('renders catalog pagination on the products page', function () {
         ->assertOk()
         ->assertSee('km-shop-grid', false)
         ->assertSee('page=2', false)
-        ->assertSee('VAN SAN', false)
-        ->assertDontSee('KM-C-AXELON', false);
+        ->assertSee('Sheikh Zayed Villa', false)
+        ->assertDontSee('TOC-ARC-01', false);
 });
 
 it('renders the King Motors news, cart and pump selector pages', function () {
     $this->get('/news')
         ->assertOk()
         ->assertSee(__('site.news_and_articles'), false)
-        ->assertSee('A complete guide to choosing the right pump', false)
+        ->assertSee('A guide to choosing the right design style for your home', false)
         ->assertDontSee('أخبار ومقالات', false);
     $this->get('/pump-selector')->assertOk()->assertSee('km-selector', false);
     $this->get('/cart')->assertOk()->assertSee('km-cart', false);
 
-    $blog = Blog::query()->where('slug->en', 'pump-selection-guide')->firstOrFail();
+    $blog = Blog::query()->where('slug->en', 'design-style-guide')->firstOrFail();
 
     $this->get('/news/'.$blog->getTranslation('slug', 'en'))
         ->assertOk()

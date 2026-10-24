@@ -26,7 +26,7 @@ beforeEach(function () {
 
     $this->parentSolution = Service::query()
         ->whereNull('parent_id')
-        ->where('slug->en', 'technical-consulting')
+        ->where('slug->en', 'interior-design')
         ->firstOrFail();
 
     childSolution($this->parentSolution, 'Single Wall Cartons', 1);
@@ -42,7 +42,7 @@ beforeEach(function () {
 it('lists the design services and hides child solutions', function () {
     $this->get('/services')
         ->assertOk()
-        ->assertSee('Technical Consulting', false)
+        ->assertSee('Interior Design', false)
         ->assertDontSee('Single Wall Cartons', false);
 });
 
@@ -57,7 +57,7 @@ it('shows children when a parent solution is opened', function () {
 
 it('opens service details directly when the service has no children', function () {
     $leaf = Service::query()
-        ->where('slug->en', 'warranty-maintenance')
+        ->where('slug->en', 'home-renovation')
         ->firstOrFail();
 
     expect($leaf->children()->count())->toBe(0);
