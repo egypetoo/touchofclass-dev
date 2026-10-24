@@ -175,28 +175,35 @@ class SiteLayoutDataService
      */
     public function footer(?SiteSetting $setting, ?Branch $branch): array
     {
-        $phone = $setting?->ctaPhoneEntries()[0] ?? $this->branchPhone($branch);
+        $phones = $setting?->ctaPhoneEntries() ?? [];
+        if ($phones === []) {
+            $fallbackPhone = $this->branchPhone($branch);
+            $phones = $fallbackPhone === null ? [] : [$fallbackPhone];
+        }
         $email = $setting?->support_email ?: $branch?->email;
-        $phoneHref = $phone === null
-            ? null
-            : (str_starts_with($phone['tel'], 'tel:') ? $phone['tel'] : 'tel:'.$phone['tel']);
+        $phoneItems = array_map(function (array $entry): array {
+            $href = str_starts_with($entry['tel'], 'tel:') ? $entry['tel'] : 'tel:'.$entry['tel'];
+
+            return [
+                'icon' => 'fa-solid fa-phone-volume',
+                'gold' => true,
+                'href' => $href,
+                'lines' => [$entry['display']],
+                'ltr' => true,
+                'external' => false,
+            ];
+        }, $phones);
+        $phoneHref = $phoneItems[0]['href'] ?? null;
         $whatsappUrl = $setting?->ctaWhatsappEntries()[0]['url'] ?? null;
         $name = $setting?->siteName() ?: 'Touch of Class';
         $copyright = trim((string) $setting?->{'footer_copyright_'.app()->getLocale()});
 
         $addressLines = $this->textLines((string) ($branch?->address ?? ''));
         $hourLines = $this->textLines((string) ($branch?->working_hours ?? ''));
-        $addressHref = filled($branch?->map_url) ? (string) $branch->map_url : null;
+        $addressItems = $this->footerAddressItems($branch, $addressLines);
 
         $contactItems = array_values(array_filter([
-            $phoneHref ? [
-                'icon' => 'fa-solid fa-phone-volume',
-                'gold' => true,
-                'href' => $phoneHref,
-                'lines' => [$phone['display']],
-                'ltr' => true,
-                'external' => false,
-            ] : null,
+            ...$phoneItems,
             filled($email) ? [
                 'icon' => 'fa-solid fa-envelope',
                 'gold' => false,
@@ -205,14 +212,7 @@ class SiteLayoutDataService
                 'ltr' => true,
                 'external' => false,
             ] : null,
-            $addressLines !== [] ? [
-                'icon' => 'fa-solid fa-location-dot',
-                'gold' => false,
-                'href' => $addressHref,
-                'lines' => $addressLines,
-                'ltr' => false,
-                'external' => $addressHref !== null,
-            ] : null,
+            ...$addressItems,
             $hourLines !== [] ? [
                 'icon' => 'fa-solid fa-clock-rotate-left',
                 'gold' => false,
@@ -314,6 +314,55 @@ class SiteLayoutDataService
         }
 
         return $socials;
+    }
+
+    /**
+     * @param  list<string>  $mainAddressLines
+     * @return list<array{icon: string, gold: bool, href: ?string, lines: list<string>, ltr: bool, external: bool}>
+     */
+    private function footerAddressItems(?Branch $branch, array $mainAddressLines): array
+    {
+        $places = $this->branches()
+            ->filter(fn (Branch $place): bool => trim(strip_tags((string) $place->address)) !== '')
+            ->values();
+
+        if ($places->count() <= 1) {
+            if ($mainAddressLines === []) {
+                return [];
+            }
+
+            $href = filled($branch?->map_url) ? (string) $branch->map_url : null;
+
+            return [[
+                'icon' => 'fa-solid fa-location-dot',
+                'gold' => false,
+                'href' => $href,
+                'lines' => $mainAddressLines,
+                'ltr' => false,
+                'external' => $href !== null,
+            ]];
+        }
+
+        return $places
+            ->map(function (Branch $place): array {
+                $href = filled($place->map_url) ? (string) $place->map_url : null;
+                $name = trim(strip_tags((string) $place->name));
+                $lines = $this->textLines((string) $place->address);
+
+                if ($name !== '') {
+                    array_unshift($lines, $name);
+                }
+
+                return [
+                    'icon' => 'fa-solid fa-location-dot',
+                    'gold' => false,
+                    'href' => $href,
+                    'lines' => $lines,
+                    'ltr' => false,
+                    'external' => $href !== null,
+                ];
+            })
+            ->all();
     }
 
     /**

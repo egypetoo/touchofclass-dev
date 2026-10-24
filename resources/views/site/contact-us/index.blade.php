@@ -31,12 +31,14 @@
             </nav>
             <h1 class="km-chero-title" data-anim="up">{{ $contact_content?->title ?: __('site.contact_us') }}</h1>
             @php
-              $heroAddress = trim(strip_tags((string) ($mainBranch?->address ?? '')));
+              $heroAddresses = collect($branches ?? [])
+                  ->map(fn ($place): array => [
+                      'name' => trim(strip_tags((string) $place->name)),
+                      'address' => trim(strip_tags((string) $place->address)),
+                  ])
+                  ->filter(fn (array $place): bool => $place['address'] !== '')
+                  ->values();
               $heroHours = trim(strip_tags((string) ($mainBranch?->working_hours ?? '')));
-              $heroDesc = collect([$heroAddress, $heroHours])->filter()->implode(' ');
-              if ($heroDesc === '') {
-                  $heroDesc = $contact_content?->text ? trim(strip_tags($contact_content->text)) : __('site.contact_form_desc');
-              }
               $badgeIcons = ['fa-solid fa-bolt', 'fa-solid fa-truck-fast', 'fa-solid fa-award'];
               $badgeFallbacks = [
                   __('site.contact_reply_fast'),
@@ -44,7 +46,35 @@
                   __('site.contact_experience'),
               ];
             @endphp
-            <p class="km-chero-desc" data-anim="up">{{ $heroDesc }}</p>
+            @if ($contactPhones !== [] || $heroAddresses->isNotEmpty() || $heroHours !== '')
+              <ul class="km-chero-facts" data-anim="up">
+                @foreach ($contactPhones as $phone)
+                  <li>
+                    <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
+                    <a href="tel:{{ $phone['tel'] }}" dir="ltr">{{ $phone['display'] }}</a>
+                  </li>
+                @endforeach
+                @foreach ($heroAddresses as $place)
+                  <li>
+                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                    <span>
+                      @if ($heroAddresses->count() > 1 && $place['name'] !== '')
+                        <strong>{{ $place['name'] }}</strong>
+                      @endif
+                      {{ $place['address'] }}
+                    </span>
+                  </li>
+                @endforeach
+                @if ($heroHours !== '')
+                  <li>
+                    <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                    <span>{{ $heroHours }}</span>
+                  </li>
+                @endif
+              </ul>
+            @else
+              <p class="km-chero-desc" data-anim="up">{{ $contact_content?->text ? trim(strip_tags($contact_content->text)) : __('site.contact_form_desc') }}</p>
+            @endif
             <div class="km-chero-actions" data-anim="up">
               @if ($primaryPhone)
                 <a class="km-chero-btn is-gold" href="tel:{{ $primaryPhone['tel'] }}">
@@ -157,9 +187,29 @@
                 <span class="km-eyebrow-text">{{ __('site.visit_us') }}</span>
                 <span class="km-eyebrow-line"></span>
               </div>
-              <h2>{{ $mainBranch?->name ?: __('site.contact_headquarters') }}</h2>
-              @if ($contactAddress)
-                <p class="km-location-address"><i class="fa-solid fa-location-dot"></i> {{ $contactAddress }}</p>
+              @php
+                $listedBranches = collect($branches ?? [])->filter(
+                    fn ($place): bool => trim(strip_tags((string) $place->address)) !== ''
+                )->values();
+              @endphp
+              @if ($listedBranches->count() > 1)
+                <h2>{{ __('site.visit_us') }}</h2>
+                @foreach ($listedBranches as $place)
+                  <p class="km-location-address">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>
+                      @if (filled($place->name))
+                        <strong>{{ $place->name }}</strong>
+                      @endif
+                      {{ trim(strip_tags((string) $place->address)) }}
+                    </span>
+                  </p>
+                @endforeach
+              @else
+                <h2>{{ $mainBranch?->name ?: __('site.contact_headquarters') }}</h2>
+                @if ($contactAddress)
+                  <p class="km-location-address"><i class="fa-solid fa-location-dot"></i> {{ $contactAddress }}</p>
+                @endif
               @endif
 
               @if ($mainBranch?->working_hours)

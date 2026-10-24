@@ -214,10 +214,22 @@
               <a href="mailto:{{ $contactEmail }}" class="d-block text-decoration-none mt-1">{{ $contactEmail }}</a>
             </li>
           @endif
-          @if ($contactAddress)
+          @php
+            $menuAddresses = collect($branches ?? [])->filter(
+                fn ($place): bool => filled(strip_tags((string) $place->address))
+            )->values();
+          @endphp
+          @if ($menuAddresses->isNotEmpty())
             <li class="d-grid">
               <strong>{{ __('site.address') }} :</strong>
-              <span class="mt-1">{{ $contactAddress }}</span>
+              @foreach ($menuAddresses as $place)
+                <span class="d-block mt-1">
+                  @if ($menuAddresses->count() > 1 && filled($place->name))
+                    {{ $place->name }} —
+                  @endif
+                  {{ trim(strip_tags((string) $place->address)) }}
+                </span>
+              @endforeach
             </li>
           @endif
         </ul>

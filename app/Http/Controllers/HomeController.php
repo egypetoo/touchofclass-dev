@@ -237,20 +237,36 @@ class HomeController extends Controller
             $lines = is_array($fallbackLines) ? array_values($fallbackLines) : [(string) $fallbackLines];
         }
 
-        $phone = $setting?->ctaPhoneEntries()[0] ?? $this->branchPhone($branch);
+        $phones = $setting?->ctaPhoneEntries() ?? [];
+        if ($phones === []) {
+            $fallbackPhone = $this->branchPhone($branch);
+            $phones = $fallbackPhone === null ? [] : [$fallbackPhone];
+        }
         $email = $setting?->support_email ?: $branch?->email;
-        $address = trim(strip_tags((string) ($branch?->address ?? '')));
+        $addresses = $layoutData->branches()
+            ->map(fn (Branch $place): array => [
+                'name' => trim(strip_tags((string) $place->name)),
+                'address' => trim(strip_tags((string) $place->address)),
+            ])
+            ->filter(fn (array $place): bool => $place['address'] !== '')
+            ->values();
         $hourLines = $this->hourLines((string) ($branch?->working_hours ?? ''));
 
-        $cards = array_values(array_filter([
-            $phone ? [
+        $cards = [];
+
+        foreach ($phones as $phone) {
+            $cards[] = [
                 'icon' => 'fa-solid fa-phone-volume',
                 'title' => (string) __('site.home_contact_eyebrow'),
                 'href' => str_starts_with($phone['tel'], 'tel:') ? $phone['tel'] : 'tel:'.$phone['tel'],
                 'text' => $phone['display'],
                 'lines' => [],
                 'ltr' => true,
-            ] : null,
+            ];
+        }
+
+        $cards = array_values(array_filter([
+            ...$cards,
             filled($email) ? [
                 'icon' => 'fa-regular fa-envelope',
                 'title' => (string) __('site.email'),
@@ -259,14 +275,16 @@ class HomeController extends Controller
                 'lines' => [],
                 'ltr' => false,
             ] : null,
-            $address !== '' ? [
+            ...$addresses->map(fn (array $place): array => [
                 'icon' => 'fa-solid fa-location-dot',
-                'title' => (string) __('site.branch_address'),
+                'title' => $addresses->count() > 1 && $place['name'] !== ''
+                    ? $place['name']
+                    : (string) __('site.branch_address'),
                 'href' => null,
-                'text' => $address,
+                'text' => $place['address'],
                 'lines' => [],
                 'ltr' => false,
-            ] : null,
+            ])->all(),
             $hourLines !== [] ? [
                 'icon' => 'fa-regular fa-clock',
                 'title' => (string) __('site.working_hours'),
