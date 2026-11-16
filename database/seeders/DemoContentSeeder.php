@@ -322,17 +322,13 @@ class DemoContentSeeder extends Seeder
      */
     protected function syncServices(Organization $organization): array
     {
-        $items = [
-            ['interior-design', 'Interior Design', 'التصميم الداخلي', 'Elegant, practical spaces that balance beauty and comfort, designed around how you live.', 'مساحات أنيقة وعملية بتوازن بين الجمال والراحة، ومصممة على أسلوب حياتك.', 'studio/service-interior.jpg'],
-            ['architectural-design', 'Architectural Design', 'التصميم المعماري', 'Architectural solutions that combine creativity, function and sustainability, tailored to the site.', 'حلول معمارية تجمع الإبداع والوظيفة والاستدامة، ومفصّلة على رؤيتك وطبيعة الموقع.', 'studio/service-architecture.jpg'],
-            ['home-renovation', 'Home Renovation', 'تجديد المنازل', 'We turn existing spaces into contemporary places while respecting the character of the building.', 'نحوّل المساحات القائمة لبيئات حديثة، مع احترام طابع المبنى وإعادة الحياة لكل تفصيلة.', 'studio/service-renovation.jpg'],
-            ['project-management', 'Project Management', 'إدارة المشاريع', 'Full project management from start to finish, focused on quality, time and cost.', 'إدارة كاملة للمشروع من البداية للنهاية، بتركيز على الجودة والوقت والتكلفة.', 'studio/service-management.jpg'],
-            ['master-planning', 'Master Planning', 'التخطيط العام', 'Planning for larger projects that considers the site and long-term use before the detail of each building.', 'تخطيط للمشروعات الأكبر يراعي الموقع والاستخدام طويل المدى، قبل الدخول في تفاصيل كل مبنى.', 'studio/service-masterplan.jpg'],
-        ];
+        /** @var list<array{slug: string, image: string, title: array{en: string, ar: string}, short_text: array{en: string, ar: string}, meta_title: array{en: string, ar: string}, meta_desc: array{en: string, ar: string}, text: array{en: string, ar: string}}> $items */
+        $items = require database_path('seeders/data/touch_of_class_services.php');
 
         $services = [];
 
-        foreach ($items as $index => [$slug, $titleEn, $titleAr, $shortEn, $shortAr, $image]) {
+        foreach ($items as $index => $item) {
+            $slug = $item['slug'];
             $service = $this->findBySlug(Service::class, $slug, $organization->id) ?? new Service([
                 'organization_id' => $organization->id,
             ]);
@@ -340,19 +336,19 @@ class DemoContentSeeder extends Seeder
             $service->fill([
                 'organization_id' => $organization->id,
                 'parent_id' => null,
-                'title' => ['en' => $titleEn, 'ar' => $titleAr],
-                'label' => ['en' => $titleEn, 'ar' => $titleAr],
-                'short_text' => ['en' => $shortEn, 'ar' => $shortAr],
-                'text' => ['en' => '<p>'.e($shortEn).'</p>', 'ar' => '<p>'.e($shortAr).'</p>'],
-                'meta_title' => ['en' => $titleEn, 'ar' => $titleAr],
-                'meta_desc' => ['en' => $shortEn, 'ar' => $shortAr],
+                'title' => $item['title'],
+                'label' => $item['title'],
+                'short_text' => $item['short_text'],
+                'text' => $item['text'],
+                'meta_title' => $item['meta_title'],
+                'meta_desc' => $item['meta_desc'],
                 'slug' => ['en' => $slug, 'ar' => $slug],
                 'is_active' => true,
                 'order' => $index + 1,
             ]);
             $service->save();
             $this->lockSlug($service, $slug);
-            $this->attachDesignMedia($service, 'services', $image);
+            $this->attachDesignMedia($service, 'services', $item['image']);
             $services[] = $service->fresh();
         }
 

@@ -57,7 +57,7 @@ it('shows children when a parent solution is opened', function () {
 
 it('opens service details directly when the service has no children', function () {
     $leaf = Service::query()
-        ->where('slug->en', 'home-renovation')
+        ->where('slug->en', 'finishing-works')
         ->firstOrFail();
 
     expect($leaf->children()->count())->toBe(0);

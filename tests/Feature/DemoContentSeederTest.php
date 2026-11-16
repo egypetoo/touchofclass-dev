@@ -57,8 +57,12 @@ it('seeds Touch of Class demo content from the design', function () {
 
     $interior = Service::query()->where('slug->en', 'interior-design')->first();
 
-    expect(Service::query()->where('organization_id', $organization->id)->roots()->where('is_active', true)->count())->toBe(5)
-        ->and($interior->getTranslation('title', 'ar'))->toBe('التصميم الداخلي');
+    expect(Service::query()->where('organization_id', $organization->id)->roots()->where('is_active', true)->count())->toBe(6)
+        ->and($interior->getTranslation('title', 'ar'))->toBe('التصميم الداخلي')
+        ->and($interior->getTranslation('short_text', 'en'))->toContain('Thoughtfully Designed Interiors')
+        ->and($interior->getTranslation('text', 'ar'))->toContain('خدمات التصميم الداخلي')
+        ->and(Service::query()->where('slug->en', 'design-build')->where('is_active', true)->exists())->toBeTrue()
+        ->and(Service::query()->where('slug->en', 'home-styling')->where('is_active', true)->exists())->toBeTrue();
 
     expect(Blog::query()->where('is_active', true)->count())->toBe(4)
         ->and(Blog::query()->where('slug->en', 'design-style-guide')->exists())->toBeTrue();
@@ -88,7 +92,7 @@ it('seeds Touch of Class demo content from the design', function () {
 
     expect(Category::query()->where('organization_id', $organization->id)->where('is_active', true)->count())->toBe(4)
         ->and(Product::query()->where('is_active', true)->count())->toBe(19)
-        ->and(Service::query()->where('is_active', true)->count())->toBe(5)
+        ->and(Service::query()->where('is_active', true)->count())->toBe(6)
         ->and(Blog::query()->where('is_active', true)->count())->toBe(4)
         ->and(Partner::query()->where('organization_id', $organization->id)->where('is_active', true)->count())->toBe(10)
         ->and(Branch::query()->where('organization_id', $organization->id)->where('is_active', true)->count())->toBe(1)

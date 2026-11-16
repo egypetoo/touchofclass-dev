@@ -13,7 +13,7 @@ it('renders the King Motors service details layout', function () {
     $this->seed(DemoContentSeeder::class);
 
     $service = Service::query()
-        ->where('slug->en', 'home-renovation')
+        ->where('slug->en', 'finishing-works')
         ->firstOrFail();
 
     $response = $this
