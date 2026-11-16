@@ -32,7 +32,7 @@
 
       <div class="row g-3 justify-content-center">
         @foreach ($serviceCards as $card)
-          <div class="col-12 col-sm-6 col-lg-3">
+          <div class="col-12 col-sm-6 col-lg-4">
             <article class="service-card">
               <div class="service-card-media">
                 <img src="{{ $card->imageUrl }}" width="864" height="1152" alt="{{ $card->title }}" class="service-card-img" loading="lazy" decoding="async">
